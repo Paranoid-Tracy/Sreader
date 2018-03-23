@@ -25,7 +25,7 @@ public class WelcomeActivity extends AppCompatActivity {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         }
-        setContentView(R.layout.welcome_activity);
+        setContentView(R.layout.activity_welcome);
         imageView = (ImageView)this.findViewById(R.id.wel_img);
         Glide.with(this).load(R.mipmap.start).crossFade(DURATION).into(imageView);
         startAppDelay();
