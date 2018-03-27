@@ -1,5 +1,7 @@
 package com.yx.sreader.database;
 
+import android.media.Image;
+
 import org.litepal.crud.DataSupport;
 
 /**
@@ -10,6 +12,7 @@ public class BookList extends DataSupport {
     private int id;
     private String bookname;
     private String bookpath;
+    private Image image;
 
     public String getBookname() {
         return this.bookname;
@@ -35,4 +38,11 @@ public class BookList extends DataSupport {
         this.id = id;
     }
 
+    public Image getImage() {
+        return image;
+    }
+
+    public void setImage(Image image) {
+        this.image = image;
+    }
 }
