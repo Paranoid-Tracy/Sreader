@@ -412,9 +412,7 @@ public class DragGridView extends GridView implements View.OnClickListener{
             }
         }
         if(i == 1) {
-            //int x = getChildCount();
             firstView = getChildAt(0);
-            System.out.println("d");
             firstItemTextView = (TextView) firstView.findViewById(R.id.imageView1);
             firstItemTextView.getLocationInWindow(firstLocation);
         }
