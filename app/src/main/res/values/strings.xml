@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Sreader</string>
     <string name="my_shelf">我的书架</string>
+    <string name="root">根目录</string>
+    <string name="choose_all">全选</string>
+    <string name="cancel">取消</string>
+
 </resources>

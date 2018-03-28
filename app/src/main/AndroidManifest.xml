@@ -1,7 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 
     package="com.yx.sreader">
-    <uses-permission android:name="android.permission.VIBRATE"></uses-permission>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
 
 
 
@@ -25,6 +28,12 @@
 
             android:label="Sreader"
             android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
+        <activity android:name=".activity.FileActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName="com.yx.sreader.activity.MainActivity">
+
 
         </activity>
 

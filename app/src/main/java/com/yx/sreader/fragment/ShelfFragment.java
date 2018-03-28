@@ -65,14 +65,12 @@ public class ShelfFragment extends Fragment {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        /*if (id == R.id.action_settings) {
-            Intent intent = new Intent(MainActivity.this,FileAcitvity.class);
+        if (id == R.id.action_settings) {
+            Intent intent = new Intent(getActivity(),com.yx.sreader.activity.FileActivity.class);
             startActivity(intent);
             return true;
         }
-        if (id==android.R.id.home) {
-            drawerLayout.openDrawer(GravityCompat.START);
-        }*/
+
         return super.onOptionsItemSelected(item);
     }
 
