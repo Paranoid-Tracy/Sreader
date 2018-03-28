@@ -14,12 +14,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.yx.sreader.R;
+import com.yx.sreader.adapter.FileAdapter;
 import com.yx.sreader.util.FileUtil;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 /**
@@ -36,8 +38,13 @@ public class FileActivity extends AppCompatActivity {
     private static Stack<String> pathStack;
     protected List<AsyncTask<Void, Void, Boolean>> myAsyncTasks = new ArrayList<AsyncTask<Void, Void, Boolean>>();
     private List<File> listFile;
-    private static HashMap<Integer,Boolean> isSelected;
-    public static ArrayList<String> paths = new ArrayList<String>();
+    private static HashMap<Integer,Boolean> isSelected;  //标志是否复选
+    public static ArrayList<String> paths = new ArrayList<String>();  //后缀为.txt的文件集合
+    public static int checkNum = 0; // 记录选中的条目数量
+    private static FileAdapter adapter;
+    public static Map<String,Integer> mapin = new HashMap<String, Integer>() ;//.txt文件paths和总体位置的对应集合
+
+
 
 
 
@@ -62,8 +69,8 @@ public class FileActivity extends AppCompatActivity {
 
     private void initView() {
         listView = (ListView) findViewById(R.id.local_File_drawer);
-        //adapter = new FileAdapter(this, listFile, isSelected);
-        //listView.setAdapter(adapter);
+        adapter = new FileAdapter(this, listFile, isSelected);
+        listView.setAdapter(adapter);
         //listView.setOnItemClickListener(new DrawerItemClickListener());
         //listView.setOnItemLongClickListener(new DrawerItemClickListener());//
         returnBtn = (ImageButton) findViewById(R.id.local_File_return_btn);
@@ -100,14 +107,14 @@ public class FileActivity extends AppCompatActivity {
             protected void onPostExecute(Boolean result){
                 super.onPostExecute(result);
                 if(result){
-                    //adapter.setFiles(listFile);  //list值传到adapter
+                    adapter.setFiles(listFile);  //list值传到adapter
                     isSelected = new HashMap<Integer, Boolean>();//异步线程后checkBox初始赋值
                     for (int i = 0; i < listFile.size(); i++) {
                         isSelected.put(i, false);
                     }
                     //adapter.setSelectedPosition(-1);
                     addfileButton.setText("加入书架(" + 0 + ")项");//异步线程后重新执行初始化
-                    //adapter.notifyDataSetChanged();
+                    adapter.notifyDataSetChanged();
                 }
                 else {
                     Toast.makeText(FileActivity.this,"查询失败",Toast.LENGTH_LONG).show();
@@ -121,6 +128,17 @@ public class FileActivity extends AppCompatActivity {
             pathStack = new Stack<String>();
         }
         pathStack.add(path);
+    }
+    public static HashMap<Integer,Boolean> getIsSelected() {
+        return isSelected;
+    }
+
+    public static void dataChanged() {
+        // 通知listView刷新
+        adapter.notifyDataSetChanged();
+        // TextView显示最新的选中数目
+        addfileButton.setText("加入书架("+ checkNum + ")项");
+
     }
 
 
