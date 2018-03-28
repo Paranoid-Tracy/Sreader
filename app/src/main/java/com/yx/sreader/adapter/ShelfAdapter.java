@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.yx.sreader.DragGridListener;
 import com.yx.sreader.R;
 import com.yx.sreader.database.BookList;
+import com.yx.sreader.view.DragGridView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +42,12 @@ public class ShelfAdapter extends BaseAdapter implements DragGridListener {
 
     @Override
     public int getCount() {
-       return 10;
+        if(bilist.size()<10){
+            return 10; //背景书架的draw需要用到item的高度
+        }else{
+
+            return bilist.size();
+        }
     }
 
     @Override
@@ -69,6 +75,44 @@ public class ShelfAdapter extends BaseAdapter implements DragGridListener {
         else {
             viewHolder = (ViewHolder) contentView.getTag();
         }
+        if (bilist.size() == 0) {
+            //   viewHolder.view.setBackgroundResource(R.drawable.cover_default_new);
+            viewHolder.view.setClickable(false);
+            viewHolder.view.setVisibility(View.INVISIBLE);
+            viewHolder.deleteItem_IB.setVisibility(View.INVISIBLE);
+        } else {
+            if (bilist.size() > position) {
+
+                //   viewHolder.view.setBackgroundResource(R.drawable.cover_default_new);
+                final String fileName = bilist.get(position).getBookname();
+                final String filePath = bilist.get(position).getBookpath();
+                viewHolder.view.setText(fileName);
+
+                if (DragGridView.getShowDeleteButton()) {
+                    viewHolder.deleteItem_IB.setVisibility(View.VISIBLE);
+                } else {
+                    viewHolder.deleteItem_IB.setVisibility(View.INVISIBLE);
+                }
+                bookname = fileName;
+                booKpath = filePath;
+
+                if (position == mHidePosition) {
+                    contentView.setVisibility(View.INVISIBLE);
+                } else {
+                    contentView.setVisibility(View.VISIBLE);//DragGridView  解决复用问题
+
+                }
+
+            } else {
+                //   viewHolder.view.setBackgroundResource(R.drawable.cover_default_new);
+                viewHolder.view.setClickable(false);
+                viewHolder.deleteItem_IB.setClickable(false);
+                viewHolder.view.setVisibility(View.GONE);
+                viewHolder.deleteItem_IB.setVisibility(View.GONE);
+
+            }
+        }
+
         return contentView;
     }
     class ViewHolder {

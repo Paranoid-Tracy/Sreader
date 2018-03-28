@@ -21,6 +21,9 @@ import com.yx.sreader.adapter.ShelfAdapter;
 import com.yx.sreader.database.BookList;
 import com.yx.sreader.view.DragGridView;
 
+import org.litepal.crud.DataSupport;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.yx.sreader.R.string.my_shelf;
@@ -44,6 +47,8 @@ public class ShelfFragment extends Fragment {
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_shelf, container, false);
         bookShelf = (DragGridView) view.findViewById(R.id.bookShelf);
+        bookLists = new ArrayList<>();
+        bookLists = DataSupport.findAll(BookList.class);
         adapter = new ShelfAdapter(getContext(), bookLists);
         bookShelf.setAdapter(adapter);
         setHasOptionsMenu(true);
