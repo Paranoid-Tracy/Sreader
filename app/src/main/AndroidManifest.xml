@@ -33,8 +33,10 @@
         </activity>
         <activity android:name=".activity.FileActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName="com.yx.sreader.activity.MainActivity">
-
+            android:parentActivityName=".activity.MainActivity">
+        </activity>
+        <activity android:name=".activity.ReadActivity"
+            android:parentActivityName=".activity.MainActivity">
 
         </activity>
 

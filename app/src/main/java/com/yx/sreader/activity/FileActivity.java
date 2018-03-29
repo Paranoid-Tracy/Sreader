@@ -256,20 +256,20 @@ public class FileActivity extends AppCompatActivity {
             String sql = "SELECT id FROM booklist WHERE bookname =? ";
             Cursor cursor = DataSupport.findBySQL(sql, fileName);
             if (!cursor.moveToFirst()) {
-                //bookList.setBookname(fileName);
-                //bookList.setBookpath(filePath);
-                //bookList.save();//如果没有添加到数据库则添加到数据库
+                bookList.setBookname(fileName);
+                bookList.setBookpath(filePath);
+                bookList.save();//如果没有添加到数据库则添加到数据库
                 Intent intent = new Intent();
-                //intent.setClass(FileActivity.this, ReadActivity.class);
-                //intent.putExtra("bookpath", filePath);
-                //intent.putExtra("bookname",fileName);
-                //startActivity(intent);
-            }else {
-                /*Intent intent = new Intent();
                 intent.setClass(FileActivity.this, ReadActivity.class);
                 intent.putExtra("bookpath", filePath);
                 intent.putExtra("bookname",fileName);
-                startActivity(intent);*/
+                startActivity(intent);
+            }else {
+                Intent intent = new Intent();
+                intent.setClass(FileActivity.this, ReadActivity.class);
+                intent.putExtra("bookpath", filePath);
+                intent.putExtra("bookname",fileName);
+                startActivity(intent);
             }
         }
     }

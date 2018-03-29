@@ -647,4 +647,6 @@ public class DragGridView extends GridView implements View.OnClickListener{
         mDragAdapter.removeItem(mDragPosition);
 
     }
+
+
 }

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
+import android.support.v7.appcompat.R.anim;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -14,9 +15,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 
 import com.yx.sreader.R;
 import com.yx.sreader.activity.MainActivity;
+import com.yx.sreader.activity.ReadActivity;
 import com.yx.sreader.adapter.ShelfAdapter;
 import com.yx.sreader.database.BookList;
 import com.yx.sreader.view.DragGridView;
@@ -37,6 +40,10 @@ public class ShelfFragment extends Fragment {
     private ShelfAdapter adapter;
     private List<BookList> bookLists;
     private DragGridView bookShelf;
+    private int bookViewPosition;
+    private int itemPosition;
+
+
 
     public ShelfFragment() {
 
@@ -53,9 +60,29 @@ public class ShelfFragment extends Fragment {
         bookShelf.setAdapter(adapter);
         setHasOptionsMenu(true);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("我的书架");
+        bookShelf.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                setBookViewPosition(itemPosition);
+                adapter.setItemToFirst(itemPosition);
+                String bookpath = bookLists.get(itemPosition).getBookpath();
+                String bookname = bookLists.get(itemPosition).getBookname();
+                Intent intent = new Intent();
+                intent.setClass(getContext(), ReadActivity.class);
+                intent.putExtra("bookpath", bookpath);
+                intent.putExtra("bookname", bookname);
+                startActivity(intent);
+                getActivity().overridePendingTransition(anim.abc_grow_fade_in_from_bottom, anim.abc_shrink_fade_out_from_bottom);
+
+            }
+        });
 
         return view;
     }
+    public void setBookViewPosition(int position) {
+        this.bookViewPosition = position;
+    }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
