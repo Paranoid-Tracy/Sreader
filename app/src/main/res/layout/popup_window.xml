@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/book_pop"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/top_bar_bg"
+        android:orientation="horizontal"
+        android:id="@+id/linearLayout">
+        <ImageButton
+            android:id="@+id/pop_return"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/return_button"
+            android:layout_marginLeft="10dp"
+            android:layout_gravity="center_vertical"
+
+            />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:orientation="horizontal">
+
+         <ImageButton
+             android:id="@+id/imageBtn_light"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_gravity="center_vertical"
+             android:background="@color/black"
+             />
+
+        <ImageButton
+            android:id="@+id/listener_book"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/img_tts"
+
+            />
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/blank_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bookpop_bottom"
+        android:layout_below="@+id/linearLayout"/>
+
+    <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/bookpop_bottom"
+    android:baselineAligned="false"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+    <TextView
+        style="@style/text_style"
+        android:id="@+id/bookBtn_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:drawableTop="@drawable/reader_text_size"
+        android:gravity="center"
+        android:text="@string/bookpop_size" />
+
+    <TextView
+        style="@style/text_style"
+        android:id="@+id/bookBtn_light"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:drawableTop="@drawable/reader_screen_brightness"
+        android:gravity="center"
+        android:text="@string/bookpop_light" />
+
+    <TextView
+        style="@style/text_style"
+        android:id="@+id/bookBtn_mark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:drawableTop="@drawable/reader_bookmark_operation"
+        android:gravity="center"
+        android:text="@string/bookpop_card" />
+
+    <TextView
+        style="@style/text_style"
+        android:id="@+id/bookBtn_jump"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:drawableTop="@drawable/reader_jump_to"
+        android:gravity="center"
+        android:text="@string/bookpop_send" />
+    <TextView
+        style="@style/text_style"
+        android:layout_marginTop="1dp"
+        android:id="@+id/readSet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:drawableTop="@drawable/directory"
+        android:gravity="center"
+        android:text="@string/bookpop_dir" />
+        </LinearLayout>
+
+
+
+
+</RelativeLayout>

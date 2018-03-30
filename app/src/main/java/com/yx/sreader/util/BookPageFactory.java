@@ -32,6 +32,7 @@ public class BookPageFactory {
     private String m_strCharsetName = "GBK";
     private static final String TAG = "BookPageFactory";
 
+    private boolean m_isfirstPage, m_islastPage;
 
 
     private int m_textColor = Color.rgb(50, 65, 78);
@@ -215,6 +216,13 @@ public class BookPageFactory {
 
     }
 
+    /**
+     * 读取指定位置的下一个段落
+     *
+     * @param nFromPos
+     * @return byte[]
+     */
+
     protected byte[] readParagraphForward(int nFromPos) {
         int nStart = nFromPos;
         int i = nStart;
@@ -252,6 +260,144 @@ public class BookPageFactory {
         return buf;
     }
 
+    /**
+     * 读取指定位置的上一个段落
+     *
+     * @param nFromPos
+     * @return byte[]
+     */
+    protected byte[] readParagraphBack(int nFromPos) {
+        int nEnd = nFromPos;
+        int i;
+        byte b0, b1;
+        if (m_strCharsetName.equals("UTF-16LE")) {
+            i = nEnd - 2;
+            while (i > 0) {
+                b0 = m_mbBuf.get(i);
+                b1 = m_mbBuf.get(i + 1);
+                if (b0 == 0x0a && b1 == 0x00 && i != nEnd - 2) {
+                    i += 2;
+                    break;
+                }
+                i--;
+            }
+
+        } else if (m_strCharsetName.equals("UTF-16BE")) {
+            i = nEnd - 2;
+            while (i > 0) {
+                b0 = m_mbBuf.get(i);
+                b1 = m_mbBuf.get(i + 1);
+                if (b0 == 0x00 && b1 == 0x0a && i != nEnd - 2) {
+                    i += 2;
+                    break;
+                }
+                i--;
+            }
+        } else {
+            i = nEnd - 1;
+            while (i > 0) {
+                b0 = m_mbBuf.get(i);
+                if (b0 == 0x0a && i != nEnd - 1) {// 0x0a表示换行符
+                    i++;
+                    break;
+                }
+                i--;
+            }
+        }
+        if (i < 0)
+            i = 0;
+        int nParaSize = nEnd - i;
+        int j;
+        byte[] buf = new byte[nParaSize];
+        for (j = 0; j < nParaSize; j++) {
+            buf[j] = m_mbBuf.get(i + j);
+        }
+        return buf;
+    }
+
+    public void nextPage() throws IOException {
+        if (m_mbBufEnd >= m_mbBufLen) {
+            m_islastPage = true;
+            return;
+        } else
+            m_islastPage = false;
+        m_lines.clear();
+        m_mbBufBegin = m_mbBufEnd;// 当前页结束位置作为向前翻页的开始位置
+        m_lines = pageDown();
+
+    }
+
+    /**
+     * 得到上上页的结束位置
+     */
+    protected void pageUp() {
+        if (m_mbBufBegin < 0)
+            m_mbBufBegin = 0;
+        Vector<String> lines = new Vector<String>();
+        String strParagraph = "";
+        while (lines.size() < mLineCount && m_mbBufBegin > 0) {
+            Vector<String> paraLines = new Vector<String>();
+            byte[] paraBuf = readParagraphBack(m_mbBufBegin);
+            m_mbBufBegin -= paraBuf.length;// 每次读取一段后,记录开始点位置,是段首开始的位置
+            try {
+                strParagraph = new String(paraBuf, m_strCharsetName);
+            } catch (UnsupportedEncodingException e) {
+                Log.e(TAG, "pageUp->转换编码失败", e);
+            }
+            String strReturn = "";
+            strParagraph = strParagraph.replaceAll("\r\n", "");
+            strParagraph = strParagraph.replaceAll("\n", "");
+            // 如果是空白行，直接添加
+            if (strParagraph.length() == 0) {
+                lines.add(strParagraph);
+            }
+
+            while (strParagraph.length() > 0) {
+                // 画一行文字
+                int nSize = mPaint.breakText(strParagraph, true, mVisibleWidth,
+                        null);
+                paraLines.add(strParagraph.substring(0, nSize));
+                strParagraph = strParagraph.substring(nSize);
+
+            }
+            lines.addAll(0, paraLines);
+            lines.add("\n\n");
+
+            if(lines.size() > mLineCount) {
+                //  break;
+            }
+        }
+
+        while (lines.size() > mLineCount) {
+            try {
+                m_mbBufBegin += lines.get(0).getBytes(m_strCharsetName).length;
+                lines.remove(0);
+            } catch (UnsupportedEncodingException e) {
+                Log.e(TAG, "pageUp->记录起始点位置失败", e);
+            }
+        }
+        m_mbBufEnd = m_mbBufBegin;// 上上一页的结束点等于上一页的起始点
+        return;
+    }
+
+    /**
+     * 向前翻页
+     *
+     * @throws IOException
+     */
+    public void prePage() throws IOException {
+        if (m_mbBufBegin <= 0) {
+            m_mbBufBegin = 0;
+            m_isfirstPage = true;
+            return;
+        } else
+            m_isfirstPage = false;
+        m_lines.clear();
+        pageUp();
+        m_lines = pageDown();
+
+    }
+
     public void setM_textColor(int m_textColor) {
         this.m_textColor = m_textColor;
     }
@@ -261,4 +407,19 @@ public class BookPageFactory {
     public int getM_fontSize() {
         return this.m_fontSize; //2016.1.4
     }
+    public int getM_mbBufBegin() {
+        return m_mbBufBegin;
+    }
+    public String getFirstTwoLineText() {
+        return m_lines.size() > 0 ? m_lines.get(0)+m_lines.get(1) : "";
+    }
+
+    public boolean isFirstPage() {
+        return m_isfirstPage;
+    }
+
+    public boolean isLastPage() {
+        return m_islastPage;
+    }
+
 }

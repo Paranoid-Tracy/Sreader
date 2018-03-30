@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Display;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
@@ -32,6 +33,8 @@ public class ReadActivity extends AppCompatActivity {
 
     private static final String TAG = "ReadActivity";
     public static String words;
+    private static String word = "";// 记录当前页面的文字
+
 
     private static String bookPath,bookName;// 记录读入书的路径及书名
     private static int begin = 0;// 记录的书籍开始位置
@@ -158,6 +161,68 @@ public class ReadActivity extends AppCompatActivity {
 
 
         //setPop(); //初始化POPUPWINDOW
+        //mPageWidget.setBitmaps(mCurPageBitmap,mCurPageBitmap);
+        mPageWidget.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                boolean ret = false;
+                //触点在中间
+                if(v == mPageWidget){
+                    if(event.getAction() == MotionEvent.ACTION_DOWN){
+                        mPageWidget.abortAnimation();
+                        mPageWidget.calcCornerXY(event.getX(),event.getY());
+                        bookPageFactory.onDraw(mCurPageCanvas);
+                        int x = (int)event.getX();
+                        int y = (int)event.getY();
+                        if(x > screenWidth/3 &&x < screenWidth *2/3 &&
+                                y > screenHeight/3 && y < screenHeight *2/3){
+
+                        }
+                        //触点在左侧
+                        if(x < screenWidth /2){
+                            try {
+                                bookPageFactory.prePage();
+                                begin = bookPageFactory.getM_mbBufBegin();// 获取当前阅读位置
+                                word = bookPageFactory.getFirstTwoLineText();// 获取当前阅读位置的首行文字
+                            } catch (IOException e1) {
+                                Log.e(TAG, "onTouch->prePage error", e1);
+                            }
+                            if (bookPageFactory.isFirstPage()) {
+                                Toast.makeText(mContext, "当前是第一页", Toast.LENGTH_SHORT).show();
+                                return false;
+                            }
+                            bookPageFactory.onDraw(mNextPageCanvas);
+
+
+                        }
+                        //触点在右侧
+                        else if(x >= screenWidth /2){
+                            try{
+                                bookPageFactory.nextPage();
+                                begin = bookPageFactory.getM_mbBufBegin();// 获取当前阅读位置
+                                word = bookPageFactory.getFirstTwoLineText();// 获取当前阅读位置的首行文字
+
+                            }catch (IOException e){
+
+                            }
+                            if (bookPageFactory.isLastPage()) {
+                                Toast.makeText(mContext, "已经是最后一页了", Toast.LENGTH_SHORT).show();
+                                return false;
+                            }
+                            bookPageFactory.onDraw(mNextPageCanvas);
+                        }
+                        mPageWidget.setBitmaps(mCurPageBitmap, mNextPageBitmap);
+
+
+                    }
+                    ret = mPageWidget.doTouchEvent(event);
+                    return ret;
+
+                }
+
+                return false;
+            }
+        });
 
 
 

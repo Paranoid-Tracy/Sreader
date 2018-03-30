@@ -4,5 +4,10 @@
     <string name="root">根目录</string>
     <string name="choose_all">全选</string>
     <string name="cancel">取消</string>
+    <string name="bookpop_size">字体</string>
+    <string name="bookpop_light">亮度</string>
+    <string name="bookpop_card">书签</string>
+    <string name="bookpop_send">跳转</string>
+    <string name="bookpop_dir">目录</string>
 
 </resources>
