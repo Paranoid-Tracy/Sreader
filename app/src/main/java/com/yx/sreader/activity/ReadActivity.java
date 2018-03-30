@@ -13,10 +13,14 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.yx.sreader.R;
@@ -29,7 +33,7 @@ import java.io.IOException;
  * Created by iss on 2018/3/29.
  */
 
-public class ReadActivity extends AppCompatActivity {
+public class ReadActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = "ReadActivity";
     public static String words;
@@ -61,7 +65,9 @@ public class ReadActivity extends AppCompatActivity {
     private WindowManager.LayoutParams lp;
     private String ccc = null;// 记录是否为快捷方式调用
     private static int begin1;
-
+    private Boolean show = false;// popwindow是否显示
+    private View popupWindow,toolPop;
+    private PopupWindow mPopupWindow,mToolpop;
 
 
 
@@ -102,6 +108,7 @@ public class ReadActivity extends AppCompatActivity {
         mPageWidget = new PageWidget(this, screenWidth, readHeight);// 页面
         RelativeLayout rlayout = (RelativeLayout) findViewById(R.id.layout_read);
         rlayout.addView(mPageWidget);
+        setPop(); //初始化POPUPWINDOW
         sp = getSharedPreferences("config", MODE_PRIVATE);
         editor = sp.edit();
         fontsize = getSize();// 获取配置文件中的size大小
@@ -160,7 +167,6 @@ public class ReadActivity extends AppCompatActivity {
         }
 
 
-        //setPop(); //初始化POPUPWINDOW
         //mPageWidget.setBitmaps(mCurPageBitmap,mCurPageBitmap);
         mPageWidget.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -176,7 +182,15 @@ public class ReadActivity extends AppCompatActivity {
                         int y = (int)event.getY();
                         if(x > screenWidth/3 &&x < screenWidth *2/3 &&
                                 y > screenHeight/3 && y < screenHeight *2/3){
+                            if(!show){
+                                showSystemUI();
+                                pop();
+                                show = true;
+                            }else {
+                                hideSystemUI();
 
+                            }
+                            return false;
                         }
                         //触点在左侧
                         if(x < screenWidth /2){
@@ -254,6 +268,29 @@ public class ReadActivity extends AppCompatActivity {
     }
 
     /**
+     * 初始化所有POPUPWINDOW
+     */
+    private void setPop(){
+        popupWindow = this.getLayoutInflater().inflate(R.layout.popup_window,null);
+        mPopupWindow = new PopupWindow(popupWindow, ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        //toolPop = this.getLayoutInflater().inflate(R.layout.toolpop,null);
+        //mToolpop = new PopupWindow(toolPop,ViewGroup.LayoutParams.MATCH_PARENT,
+        //        ViewGroup.LayoutParams.WRAP_CONTENT);
+
+
+    }
+    private void pop(){
+        mPopupWindow.showAtLocation(mPageWidget, Gravity.NO_GRAVITY, 0, 0);
+        TextView blank_view = (TextView) popupWindow.findViewById(R.id.blank_view);
+
+        blank_view.setOnClickListener(this);
+
+
+
+    }
+
+    /**
      * 获取夜间还是白天阅读模式
      */
     private boolean getDayOrNight() {
@@ -271,5 +308,19 @@ public class ReadActivity extends AppCompatActivity {
      */
     private int getLight() {
         return sp.getInt("light", 3);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.blank_view :
+                if (show) {
+                    show = false;
+                    hideSystemUI();
+                    mPopupWindow.dismiss();
+                    //popDismiss();
+                }
+                break;
+        }
     }
 }
