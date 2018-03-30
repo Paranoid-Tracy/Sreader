@@ -3,6 +3,7 @@ package com.yx.sreader.adapter;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,11 @@ import com.yx.sreader.R;
 import com.yx.sreader.database.BookList;
 import com.yx.sreader.view.DragGridView;
 
+import org.litepal.crud.DataSupport;
+import org.litepal.exceptions.DataSupportException;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -123,25 +128,163 @@ public class ShelfAdapter extends BaseAdapter implements DragGridListener {
     @Override
     public void reorderItems(int oldPosition, int newPosition) {
 
+        BookList temp = bilist.get(oldPosition);
+        List<BookList> bookLists1 = new ArrayList<>();
+        bookLists1 = DataSupport.findAll(BookList.class);
+
+        int tempId = bookLists1.get(newPosition).getId();
+        // Log.d("oldposotion is",oldPosition+"");
+        // Log.d("newposotion is", newPosition + "");
+        if(oldPosition < newPosition){
+            for(int i=oldPosition; i<newPosition; i++){
+                //获得交换前的ID,必须是数据库的真正的ID，如果使用bilist获取id是错误的，因为bilist交换后id是跟着交换的
+                List<BookList> bookLists = new ArrayList<>();
+                bookLists = DataSupport.findAll(BookList.class);
+                int dataBasesId = bookLists.get(i).getId();
+                Collections.swap(bilist, i, i + 1);
+
+                updateBookPosition(i,dataBasesId, bilist);
+
+            }
+        }else if(oldPosition > newPosition){
+            for(int i=oldPosition; i>newPosition; i--) {
+                List<BookList> bookLists = new ArrayList<>();
+                bookLists = DataSupport.findAll(BookList.class);
+                int dataBasesId = bookLists.get(i).getId();
+
+                Collections.swap(bilist, i, i - 1);
+
+                updateBookPosition(i,dataBasesId,bilist);
+
+            }
+        }
+
+        bilist.set(newPosition, temp);
+        updateBookPosition(newPosition, tempId, bilist);
+
     }
 
+    /**
+     * 两个item数据交换结束后，把不需要再交换的item更新到数据库中
+     * @param position
+     * @param bookLists
+     */
+    public void updateBookPosition (int position,int databaseId,List<BookList> bookLists) {
+        BookList bookList = new BookList();
+        BookList bookList1 = new BookList();
+        String bookpath = bookLists.get(position).getBookpath();
+        String bookname = bookLists.get(position).getBookname();
+        bookList.setBookpath(bookpath);
+        bookList1.setBookname(bookname);
+        //开线程保存改动的数据到数据库
+        //使用litepal数据库框架update时每次只能update一个id中的一条信息，如果相同则不更新。
+        upDateBookToSqlite(databaseId , bookList, bookList1);
+    }
+
+    public void putAsyncTask(AsyncTask<Void, Void, Boolean> asyncTask) {
+        myAsyncTasks.add(asyncTask.execute());
+    }
+
+    /**
+     * 数据库书本信息更新
+     * @param databaseId  要更新的数据库的书本ID
+     * @param bookList
+     * @param bookList1
+     */
+    public void upDateBookToSqlite(final int databaseId,final BookList bookList,final BookList bookList1) {
+
+        putAsyncTask(new AsyncTask<Void, Void, Boolean>() {
+            @Override
+            protected void onPreExecute() {
+
+            }
+
+            @Override
+            protected Boolean doInBackground(Void... params) {
+                try {
+                    bookList.update(databaseId);
+                    bookList1.update(databaseId);
+
+                } catch (DataSupportException e) {
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            protected void onPostExecute(Boolean result) {
+                if (result) {
+
+                } else {
+                    Log.d("保存到数据库结果-->", "失败");
+                }
+            }
+        });
+    }
+
+    /**
+     * 隐藏item
+     * @param hidePosition
+     */
     @Override
     public void setHideItem(int hidePosition) {
-
+        this.mHidePosition = hidePosition;
+        notifyDataSetChanged();
     }
 
+    /**
+     * 删除书本
+     * @param deletePosition
+     */
     @Override
     public void removeItem(int deletePosition) {
 
+        String bookpath = bilist.get(deletePosition).getBookpath();
+        DataSupport.deleteAll(BookList.class, "bookpath = ?", bookpath);
+        bilist.remove(deletePosition);
+        // Log.d("删除的书本是", bookpath);
+
+        notifyDataSetChanged();
+
     }
 
+    /**
+     * Book打开后位置移动到第一位
+     * @param openPosition
+     */
     @Override
     public void setItemToFirst(int openPosition) {
 
+        List<BookList> bookLists1 = new ArrayList<>();
+        bookLists1 = DataSupport.findAll(BookList.class);
+        int tempId = bookLists1.get(0).getId();
+        BookList temp = bookLists1.get(openPosition);
+        // Log.d("setitem adapter ",""+openPosition);
+        if(openPosition!=0) {
+            for (int i = openPosition; i > 0 ; i--) {
+                List<BookList> bookListsList = new ArrayList<>();
+                bookListsList = DataSupport.findAll(BookList.class);
+                int dataBasesId = bookListsList.get(i).getId();
+
+                //交换bookLists1中 i 和 i - 1的数据，并从点击的位置向前更新；
+
+                Collections.swap(bookLists1, i, i - 1);
+                updateBookPosition(i, dataBasesId, bookLists1);
+            }
+
+            bookLists1.set(0, temp);
+            updateBookPosition(0, tempId, bookLists1);
+            for (int j = 0 ;j<bookLists1.size();j++) {
+                String bookpath = bookLists1.get(j).getBookpath();
+                //  Log.d("移动到第一位",bookpath);
+            }
+        }
+        notifyDataSetChanged();
     }
 
     @Override
     public void notifyDataRefresh() {
 
+        notifyDataSetChanged();
     }
 }
