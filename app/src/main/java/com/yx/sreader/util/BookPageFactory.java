@@ -52,7 +52,6 @@ public class BookPageFactory {
     private String date;
     private DecimalFormat df;
 
-    private float mBorderWidth;
     private int marginHeight ; // 上下与边缘的距离
     private int marginWidth ; // 左右与边缘的距离
 
@@ -62,7 +61,6 @@ public class BookPageFactory {
     private Intent batteryInfoIntent;
     private static Typeface typeface;
     private Paint mPaint;
-    private Paint mBatterryPaint ;
     private int mLineCount; // 每页可以显示的行数
     private Bitmap m_book_bg = null;
     private File book_file = null;
@@ -70,7 +68,8 @@ public class BookPageFactory {
     private StringBuilder word;
     private Vector<String> m_lines = new Vector<String>();
     private int m_backColor = 0xffff9e85; // 背景颜色
-
+    private Paint mBatterryPaint ;
+    private float mBorderWidth;
 
 
 
@@ -160,6 +159,8 @@ public class BookPageFactory {
             ReadActivity.words=word.toString();
             word=null;
         }
+        //画进度和时间
+        int dataWith = (int) (mBatterryPaint.measureText((date)+mBorderWidth));
     }
 
     protected Vector<String> pageDown() {

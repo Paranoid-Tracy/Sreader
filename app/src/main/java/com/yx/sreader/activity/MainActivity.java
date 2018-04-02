@@ -1,20 +1,30 @@
 package com.yx.sreader.activity;
 
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentContainer;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.BaseAdapter;
+import android.widget.Toast;
 
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.yx.sreader.R;
+import com.yx.sreader.adapter.ShelfAdapter;
 import com.yx.sreader.fragment.RecommendFragment;
 import com.yx.sreader.fragment.ShelfFragment;
 import com.yx.sreader.view.DragGridView;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 /**
@@ -26,6 +36,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
     private ShelfFragment mShelfFragment;
     private RecommendFragment mRecommendFragment;
     private DragGridView bookshelf;
+    private String mCurrentFragment;
+    private static Boolean isExit = false;
+
+
 
     @Override
     protected void onCreate(Bundle saveInstanceState) {
@@ -56,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
     }
     private  void setDefaultFragment(){
         getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment,mShelfFragment).commit();
+        mCurrentFragment = "mShelfFragment";
     }
 
     @Override
@@ -83,6 +98,45 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
     @Override
     public void onTabReselected(int position) {
 
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        // TODO Auto-generated method stub
+        System.out.print("qqq");
+        if(mCurrentFragment.equals("mShelfFragment")&&DragGridView.getShowDeleteButton()){
+            mShelfFragment.onKeyDown(keyCode, event);
+            return true;
+        }
+        else {
+            exitBy2Click();
+            return false;
+        }
+    }
+
+    private void exitBy2Click() {
+        // press twice to exit
+        Timer tExit;
+        if (!isExit) {
+            isExit = true; // ready to exit
+
+            Toast.makeText(
+                    this,
+                    this.getResources().getString(R.string.press_twice_to_exit),
+                    Toast.LENGTH_SHORT).show();
+            tExit = new Timer();
+            tExit.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    isExit = false; // cancel exit
+                }
+            }, 2000); // 2 seconds cancel exit task
+
+        } else {
+            finish();
+            // call fragments and end streams and services
+            System.exit(0);
+        }
     }
     /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {

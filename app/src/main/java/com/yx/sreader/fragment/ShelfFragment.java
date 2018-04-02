@@ -9,6 +9,7 @@ import android.support.v7.appcompat.R.anim;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -76,6 +77,9 @@ public class ShelfFragment extends Fragment {
 
             }
         });
+        /*view.setFocusable(true);//这个和下面的这个命令必须要设置了，才能监听back事件。
+        view.setFocusableInTouchMode(true);
+        view.setOnKeyListener(backListener);*/
 
         return view;
     }
@@ -105,6 +109,35 @@ public class ShelfFragment extends Fragment {
 
         return super.onOptionsItemSelected(item);
     }
+    /*private View.OnKeyListener backListener= new View.OnKeyListener() {
+
+        @Override
+        public boolean onKey(View v, int keyCode, KeyEvent event) {
+            if(event.getAction() == KeyEvent.ACTION_DOWN){
+                if(keyCode == KeyEvent.KEYCODE_BACK){
+                    if(DragGridView.getShowDeleteButton()) {
+                        DragGridView.setIsShowDeleteButton(false);
+                        //要保证是同一个adapter对象,否则在Restart后无法notifyDataSetChanged
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+            }
+            return true;
+        }
+    };*/
+
+    public void onKeyDown(int keyCode, KeyEvent event) {
+
+        if ((keyCode == KeyEvent.KEYCODE_BACK) ) {
+            if(DragGridView.getShowDeleteButton()) {
+                DragGridView.setIsShowDeleteButton(false);
+                //要保证是同一个adapter对象,否则在Restart后无法notifyDataSetChanged
+                adapter.notifyDataSetChanged();
+            }
+        }
+
+    }
+
 
 
 }
