@@ -29,13 +29,13 @@
             android:gravity="right"
             android:orientation="horizontal">
 
-         <ImageButton
-             android:id="@+id/imageBtn_light"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:layout_gravity="center_vertical"
-             android:background="@color/black"
-             />
+            <ImageButton
+                android:id="@+id/imageBtn_light"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:background="@color/black"
+                />
 
         </LinearLayout>
 

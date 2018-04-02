@@ -9,6 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -18,13 +19,17 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.yx.sreader.R;
 import com.yx.sreader.util.BookPageFactory;
+import com.yx.sreader.util.CommonUtil;
 import com.yx.sreader.view.PageWidget;
 
 import java.io.IOException;
@@ -33,7 +38,7 @@ import java.io.IOException;
  * Created by iss on 2018/3/29.
  */
 
-public class ReadActivity extends AppCompatActivity implements View.OnClickListener {
+public class ReadActivity extends AppCompatActivity implements View.OnClickListener ,SeekBar.OnSeekBarChangeListener{
 
     private static final String TAG = "ReadActivity";
     public static String words;
@@ -66,10 +71,15 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
     private String ccc = null;// 记录是否为快捷方式调用
     private static int begin1;
     private Boolean show = false;// popwindow是否显示
-    private View popupWindow,toolPop;
-    private PopupWindow mPopupWindow,mToolpop;
-
-
+    private View popupWindow,toolPop,toolpop1, toolpop2, toolpop3, toolpop4;
+    private PopupWindow mPopupWindow,mToolpop, mToolpop1, mToolpop2,
+            mToolpop3, mToolpop4;
+    private int curPos = 0,
+                prePos = 0;
+    private LinearLayout layout;
+    private TextView fontSize, readLight, bookMark, readJump,readSet;
+    private SeekBar seekBar1, seekBar2, seekBar4;
+    private TextView jumpOk, jumpCancel,fontBig,fontSmall;
 
 
 
@@ -274,18 +284,59 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
         popupWindow = this.getLayoutInflater().inflate(R.layout.popup_window,null);
         mPopupWindow = new PopupWindow(popupWindow, ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
-        //toolPop = this.getLayoutInflater().inflate(R.layout.toolpop,null);
-        //mToolpop = new PopupWindow(toolPop,ViewGroup.LayoutParams.MATCH_PARENT,
-        //        ViewGroup.LayoutParams.WRAP_CONTENT);
+        toolPop = this.getLayoutInflater().inflate(R.layout.toolpop,null);
+        mToolpop = new PopupWindow(toolPop,ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        toolpop1 = this.getLayoutInflater().inflate(R.layout.tool_size, null);
+        mToolpop1 = new PopupWindow(toolpop1, ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        toolpop2 = this.getLayoutInflater().inflate(R.layout.tool_light, null);
+        mToolpop2 = new PopupWindow(toolpop2, ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        toolpop3 = this.getLayoutInflater().inflate(R.layout.tool_mark, null);
+        mToolpop3 = new PopupWindow(toolpop3, ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        toolpop4 = this.getLayoutInflater().inflate(R.layout.tool_jump, null);
+        mToolpop4 = new PopupWindow(toolpop4, ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+
 
 
     }
     private void pop(){
         mPopupWindow.showAtLocation(mPageWidget, Gravity.NO_GRAVITY, 0, 0);
+        fontSize = (TextView) popupWindow.findViewById(R.id.bookBtn_size);
+        readLight = (TextView) popupWindow.findViewById(R.id.bookBtn_light);
+        bookMark = (TextView) popupWindow.findViewById(R.id.bookBtn_mark);
+        readJump = (TextView) popupWindow.findViewById(R.id.bookBtn_jump);
+        readSet = (TextView) popupWindow.findViewById(R.id.readSet);
+        layout = (LinearLayout) popupWindow.findViewById(R.id.bookpop_bottom);//主要为了夜间模式时设置背景
+        //System.out.println("高度"+layout.getTop());
+        fontSize.setTypeface(typeface);//设置字体
+        readLight.setTypeface(typeface);
+        bookMark.setTypeface(typeface);
+        readJump.setTypeface(typeface);
+        readSet.setTypeface(typeface);
         TextView blank_view = (TextView) popupWindow.findViewById(R.id.blank_view);
-
+       /* pop_return = (ImageButton) popupwindwow.findViewById(R.id.pop_return);
+        imageBtn_light = (ImageButton) popupwindwow.findViewById((R.id.imageBtn_light));
+        getDayOrNight();
+        if (isNight) {
+            layout.setBackgroundResource(R.drawable.tmall_bar_bg);
+            imageBtn_light.setImageResource(R.drawable.menu_light_icon2);
+        } else {
+            layout.setBackgroundResource(R.drawable.tmall_bar_bg);
+            imageBtn_light.setImageResource(R.drawable.menu_daynight_icon);
+        }*/
+        fontSize.setOnClickListener(this);
+        readLight.setOnClickListener(this);
+        bookMark.setOnClickListener(this);
+        readJump.setOnClickListener(this);
+        readSet.setOnClickListener(this);
         blank_view.setOnClickListener(this);
-
+       /* listener_book.setOnClickListener(this);
+        pop_return.setOnClickListener(this);
+        imageBtn_light.setOnClickListener(this);*/
 
 
     }
@@ -310,6 +361,77 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
         return sp.getInt("light", 3);
     }
 
+    public void setToolPop(int a) {
+        if (a == prePos && a != 0) {
+            if (mToolpop.isShowing()) {
+                popDismiss();
+            } else {
+                mToolpop.showAtLocation(mPageWidget, Gravity.BOTTOM, 0,
+                        screenWidth * 45 / 320);
+                // 当点击字体按钮
+                if (a == 1) {
+                    mToolpop1.setBackgroundDrawable(new ColorDrawable(0xb0000000));//设置背景为半透明色
+                    if (CommonUtil.getBottomStatusHeight(mContext) != 0) {
+                        int popofset = 40 * scale + CommonUtil.getBottomStatusHeight(mContext);
+                        mToolpop1.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, popofset);
+                    } else
+                        mToolpop1.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, 120);
+                    seekBar1 = (SeekBar) toolpop1.findViewById(R.id.seekBar_size);
+                    fontBig = (TextView) toolpop1.findViewById(R.id.size_plus);
+                    fontSmall = (TextView) toolpop1.findViewById(R.id.size_decrease);
+                    fontBig.setTypeface(typeface);
+                    fontSmall.setTypeface(typeface);
+                    fontsize = sp.getInt("size", defaultFontSize);
+                    seekBar1.setProgress((fontsize - minFontSize));
+                    seekBar1.setOnSeekBarChangeListener(this);
+                    fontBig.setOnClickListener(this);
+                    fontSmall.setOnClickListener(this);
+
+                }
+            }
+        }else {
+            if (mToolpop.isShowing()) {
+                // 对数据的记录
+                popDismiss();
+            }
+            mToolpop.showAtLocation(mPageWidget, Gravity.BOTTOM, 0,
+                    screenWidth * 45 / 320);
+            // 点击字体按钮
+            if (a == 1) {
+                mToolpop1.setBackgroundDrawable(new ColorDrawable(0xb0000000));
+                if (CommonUtil.getBottomStatusHeight(mContext) != 0) {
+                    int popofset = 40 * scale + CommonUtil.getBottomStatusHeight(mContext);
+                    mToolpop1.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, popofset);
+                } else
+                    mToolpop1.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, 120);
+                seekBar1 = (SeekBar) toolpop1.findViewById(R.id.seekBar_size);
+                fontBig = (TextView) toolpop1.findViewById(R.id.size_plus);
+                fontSmall = (TextView) toolpop1.findViewById(R.id.size_decrease);
+                fontBig.setTypeface(typeface);
+                fontSmall.setTypeface(typeface);
+                fontsize = sp.getInt("size", defaultFontSize);
+                seekBar1.setProgress(fontsize - minFontSize);
+                seekBar1.setOnSeekBarChangeListener(this);
+                fontBig.setOnClickListener(this);
+                fontSmall.setOnClickListener(this);
+            }
+        }
+        prePos = a;
+
+    }
+
+    /**
+     * 关闭弹出pop
+     */
+    public void popDismiss() {
+        mToolpop.dismiss();
+        mToolpop1.dismiss();
+        mToolpop2.dismiss();
+        mToolpop3.dismiss();
+        mToolpop4.dismiss();
+    }
+
+
     @Override
     public void onClick(View v) {
         switch (v.getId()){
@@ -318,9 +440,75 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
                     show = false;
                     hideSystemUI();
                     mPopupWindow.dismiss();
-                    //popDismiss();
+                    popDismiss();
                 }
                 break;
+            // 字体按钮
+            case R.id.bookBtn_size:
+                curPos = 1;
+                setToolPop(curPos);
+                break;
         }
+    }
+
+    /**
+     * 记录配置文件中字体大小
+     */
+    private void setSize(int fontsize) {
+        try {
+            //  fontsize = seekBar1.getProgress() + defaultFontSize;
+            editor.putInt("size", fontsize);
+            editor.apply();
+        } catch (Exception e) {
+            Log.e(TAG, "setSize-> Exception error", e);
+        }
+    }
+
+    /**
+     * 刷新界面
+     */
+    public void postInvalidateUI() {
+        mPageWidget.abortAnimation();
+        bookPageFactory.onDraw(mCurPageCanvas);
+        try {
+            bookPageFactory.currentPage();
+            begin = bookPageFactory.getM_mbBufBegin();// 获取当前阅读位置
+            word = bookPageFactory.getFirstTwoLineText();// 获取当前阅读位置的首两行文字
+        } catch (IOException e1) {
+            Log.e(TAG, "postInvalidateUI->IOException error", e1);
+        }
+
+        bookPageFactory.onDraw(mNextPageCanvas);
+        mPageWidget.setBitmaps(mCurPageBitmap, mNextPageBitmap);
+        mPageWidget.postInvalidate();
+
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+        switch (seekBar.getId()) {
+            // 字体进度条
+            case R.id.seekBar_size:
+                fontsize = seekBar1.getProgress() + minFontSize;
+                //Log.d("ReadActivity","size的大小"+fontsize);
+                setSize(fontsize);
+                bookPageFactory.setM_fontSize(fontsize);
+                bookPageFactory.setM_mbBufBegin(begin);
+                bookPageFactory.setM_mbBufEnd(begin);
+                postInvalidateUI();
+                break;
+        }
+
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+
     }
 }

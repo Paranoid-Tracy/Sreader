@@ -7,6 +7,8 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.RectF;
+import android.graphics.Region;
 import android.graphics.Typeface;
 import android.util.Log;
 
@@ -45,7 +47,7 @@ public class BookPageFactory {
 
     private int mWidth;
     private int mHeight;
-    private Context mcontext;
+    private Context mContext;
 
     private int m_fontSize;
     private SimpleDateFormat sdf;
@@ -71,6 +73,9 @@ public class BookPageFactory {
     private Paint mBatterryPaint ;
     private float mBorderWidth;
     private int beforeLen;
+    private float mBatteryPercentage;
+    private RectF rect1 = new RectF();
+    private RectF rect2 = new RectF();
 
 
 
@@ -81,7 +86,7 @@ public class BookPageFactory {
     public BookPageFactory(int w, int h,Context context) {
         mWidth = w;
         mHeight = h;
-        mcontext = context;
+        mContext = context;
         m_fontSize = (int) context.getResources().getDimension(R.dimen.reading_default_text_size);
         sdf = new SimpleDateFormat("HH:mm");//HH:mm为24小时制,hh:mm为12小时制
         date = sdf.format(new java.util.Date());
@@ -162,12 +167,40 @@ public class BookPageFactory {
         }
         beforeLen = m_mbBufEnd - m_mbBufBegin;
         //画进度和时间
-        int dataWith = (int) (mBatterryPaint.measureText((date)+mBorderWidth));
+        int dateWith = (int) (mBatterryPaint.measureText((date)+mBorderWidth));
         float fPerent = (float) (m_mbBufBegin * 1.0 / m_mbBufLen);
         String strPercent = df.format(fPerent * 100) + "%";
         int nPercentWidth = (int) mBatterryPaint.measureText("999.9%") + 1;    //Paint.measureText直接返回参数占有的宽度
         c.drawText(strPercent, mWidth - nPercentWidth, mHeight - 10, mBatterryPaint);//x y为坐标值
         c.drawText(date, marginWidth ,mHeight-10, mBatterryPaint);
+        //计算电池电量百分比
+        int level = batteryInfoIntent.getIntExtra("level",0);
+        int scale = batteryInfoIntent.getIntExtra("scale",100);
+        mBatteryPercentage = (float)level / scale;
+        int rect1Left = marginWidth + dateWith;
+        //外框
+        float width = CommonUtil.convertDpToPixel(mContext,20) - mBorderWidth;
+        float height = CommonUtil.convertDpToPixel(mContext,10);
+        rect1.set(rect1Left,mHeight - height -10,rect1Left + width,mHeight - 10);
+        rect2.set(rect1Left + mBorderWidth, mHeight - height + mBorderWidth - 10, rect1Left + width - mBorderWidth, mHeight - mBorderWidth - 10);
+        c.save(Canvas.CLIP_SAVE_FLAG);
+        c.clipRect(rect2, Region.Op.DIFFERENCE);//裁剪电量空间
+        c.drawRect(rect1, mBatterryPaint);
+        c.restore();
+        //画电量部分
+        rect2.left += mBorderWidth;
+        rect2.right -= mBorderWidth;
+        rect2.right = rect2.left + rect2.width() * mBatteryPercentage;
+        rect2.top += mBorderWidth;
+        rect2.bottom -= mBorderWidth;
+        c.drawRect(rect2, mBatterryPaint);
+        //画电池头
+        int poleHeight = (int) CommonUtil.convertDpToPixel(mContext,10) / 2;
+        rect2.left = rect1.right;
+        rect2.top = rect2.top + poleHeight / 4;
+        rect2.right = rect1.right + mBorderWidth;
+        rect2.bottom = rect2.bottom - poleHeight/4;
+        c.drawRect(rect2, mBatterryPaint);
 
     }
 
@@ -431,6 +464,25 @@ public class BookPageFactory {
 
     public boolean isLastPage() {
         return m_islastPage;
+    }
+
+    public void setM_fontSize(int m_fontSize) {
+        this.m_fontSize = m_fontSize;
+        mLineCount = (int) (mVisibleHeight / m_fontSize) - 1;
+    }
+
+    public void setM_mbBufBegin(int m_mbBufBegin) {
+        this.m_mbBufBegin = m_mbBufBegin;
+    }
+
+    // 设置页面结束点
+    public void setM_mbBufEnd(int m_mbBufEnd) {
+        this.m_mbBufEnd = m_mbBufEnd;
+    }
+
+    public void currentPage() throws IOException {
+        m_lines.clear();
+        m_lines = pageDown();
     }
 
 }
