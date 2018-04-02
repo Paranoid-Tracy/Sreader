@@ -33,6 +33,7 @@ import com.yx.sreader.util.CommonUtil;
 import com.yx.sreader.view.PageWidget;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 
 /**
  * Created by iss on 2018/3/29.
@@ -78,8 +79,12 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
                 prePos = 0;
     private LinearLayout layout;
     private TextView fontSize, readLight, bookMark, readJump,readSet;
+    private TextView btn_mark_add,btn_mark_my,lightPlus,linghtDecrease;
     private SeekBar seekBar1, seekBar2, seekBar4;
     private TextView jumpOk, jumpCancel,fontBig,fontSmall;
+    private static int jumpcencel_begin;
+    private TextView markEdit4;
+
 
 
 
@@ -368,26 +373,18 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
             } else {
                 mToolpop.showAtLocation(mPageWidget, Gravity.BOTTOM, 0,
                         screenWidth * 45 / 320);
-                // 当点击字体按钮
-                if (a == 1) {
-                    mToolpop1.setBackgroundDrawable(new ColorDrawable(0xb0000000));//设置背景为半透明色
-                    if (CommonUtil.getBottomStatusHeight(mContext) != 0) {
-                        int popofset = 40 * scale + CommonUtil.getBottomStatusHeight(mContext);
-                        mToolpop1.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, popofset);
-                    } else
-                        mToolpop1.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, 120);
-                    seekBar1 = (SeekBar) toolpop1.findViewById(R.id.seekBar_size);
-                    fontBig = (TextView) toolpop1.findViewById(R.id.size_plus);
-                    fontSmall = (TextView) toolpop1.findViewById(R.id.size_decrease);
-                    fontBig.setTypeface(typeface);
-                    fontSmall.setTypeface(typeface);
-                    fontsize = sp.getInt("size", defaultFontSize);
-                    seekBar1.setProgress((fontsize - minFontSize));
-                    seekBar1.setOnSeekBarChangeListener(this);
-                    fontBig.setOnClickListener(this);
-                    fontSmall.setOnClickListener(this);
+                switch (a){
+                    case 1:
+                        clickFont();
+                        break;
+                    case 2:
+                        clickLight();
+                        break;
+                    case 4:
+                        clickJump();
 
                 }
+
             }
         }else {
             if (mToolpop.isShowing()) {
@@ -396,25 +393,18 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
             }
             mToolpop.showAtLocation(mPageWidget, Gravity.BOTTOM, 0,
                     screenWidth * 45 / 320);
-            // 点击字体按钮
-            if (a == 1) {
-                mToolpop1.setBackgroundDrawable(new ColorDrawable(0xb0000000));
-                if (CommonUtil.getBottomStatusHeight(mContext) != 0) {
-                    int popofset = 40 * scale + CommonUtil.getBottomStatusHeight(mContext);
-                    mToolpop1.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, popofset);
-                } else
-                    mToolpop1.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, 120);
-                seekBar1 = (SeekBar) toolpop1.findViewById(R.id.seekBar_size);
-                fontBig = (TextView) toolpop1.findViewById(R.id.size_plus);
-                fontSmall = (TextView) toolpop1.findViewById(R.id.size_decrease);
-                fontBig.setTypeface(typeface);
-                fontSmall.setTypeface(typeface);
-                fontsize = sp.getInt("size", defaultFontSize);
-                seekBar1.setProgress(fontsize - minFontSize);
-                seekBar1.setOnSeekBarChangeListener(this);
-                fontBig.setOnClickListener(this);
-                fontSmall.setOnClickListener(this);
+            switch (a){
+                case 1:
+                    clickFont();
+                    break;
+                case 2:
+                    clickLight();
+                    break;
+                case 4:
+                    clickJump();
+
             }
+
         }
         prePos = a;
 
@@ -448,6 +438,18 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
                 curPos = 1;
                 setToolPop(curPos);
                 break;
+
+            // 亮度按钮
+            case R.id.bookBtn_light:
+                curPos = 2;
+                setToolPop(curPos);
+                break;
+            //跳转
+            case R.id.bookBtn_jump:
+                curPos = 4;
+                setToolPop(curPos);
+                jumpcencel_begin = begin;
+                break;
         }
     }
 
@@ -463,6 +465,21 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
             Log.e(TAG, "setSize-> Exception error", e);
         }
     }
+
+    /**
+     * 记录配置文件中亮度值
+     */
+    private void setLight() {
+        try {
+            light = seekBar2.getProgress();
+            editor.putInt("light", light);
+
+            editor.apply();
+        } catch (Exception e) {
+            Log.e(TAG, "setLight-> Exception error", e);
+        }
+    }
+
 
     /**
      * 刷新界面
@@ -484,6 +501,80 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    /**
+     * 点击字体
+     */
+    private void clickFont(){
+        mToolpop1.setBackgroundDrawable(new ColorDrawable(0xb0000000));
+        if (CommonUtil.getBottomStatusHeight(mContext) != 0) {
+            int popofset = 40 * scale + CommonUtil.getBottomStatusHeight(mContext);
+            mToolpop1.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, popofset);
+        } else
+            mToolpop1.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, 120);
+        seekBar1 = (SeekBar) toolpop1.findViewById(R.id.seekBar_size);
+        fontBig = (TextView) toolpop1.findViewById(R.id.size_plus);
+        fontSmall = (TextView) toolpop1.findViewById(R.id.size_decrease);
+        fontBig.setTypeface(typeface);
+        fontSmall.setTypeface(typeface);
+        fontsize = sp.getInt("size", defaultFontSize);
+        seekBar1.setProgress(fontsize - minFontSize);
+        seekBar1.setOnSeekBarChangeListener(this);
+    }
+
+    /**
+     * 点击亮度
+     */
+    private void clickLight(){
+        mToolpop2.setBackgroundDrawable(new ColorDrawable(0xb0000000));
+        if(CommonUtil.getBottomStatusHeight(mContext)!=0) {
+            int popofset = 120 +CommonUtil.getBottomStatusHeight(mContext);
+            mToolpop2.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, popofset);
+        }else
+            mToolpop2.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, 120);
+        seekBar2 = (SeekBar) toolpop2.findViewById(R.id.seekBar_light);
+        lightPlus = (TextView) toolpop2.findViewById(R.id.light_plus);
+        linghtDecrease = (TextView) toolpop2.findViewById(R.id.light_decrease);
+        lightPlus.setTypeface(typeface);
+        linghtDecrease.setTypeface(typeface);
+        getLight();
+        seekBar2.setProgress(light);
+        System.out.print("亮度" + light);
+        seekBar2.setOnSeekBarChangeListener(this);
+
+    }
+
+    /**
+     * 点击跳转
+     */
+    private void clickJump(){
+        mToolpop4.setBackgroundDrawable(new ColorDrawable(0xb0000000));
+        if(CommonUtil.getBottomStatusHeight(mContext)!=0) {
+            int popofset = 120 +CommonUtil.getBottomStatusHeight(mContext);
+            mToolpop4.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, popofset);
+        }else
+            mToolpop4.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, 120);
+        int bc = CommonUtil.getBottomStatusHeight(mContext);
+        // Log.d("ReadActivity","虚拟功能键栏高度是"+bc);
+        mToolpop4.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, 500);
+        jumpOk = (TextView) toolpop4.findViewById(R.id.jump_ok);
+        jumpCancel = (TextView) toolpop4.findViewById(R.id.jump_cancel);
+        seekBar4 = (SeekBar) toolpop4.findViewById(R.id.seekBar_jump);
+        markEdit4 = (TextView) toolpop4.findViewById(R.id.markEdit4);
+        jumpOk.setTypeface(typeface);
+        jumpCancel.setTypeface(typeface);
+        markEdit4.setTypeface(typeface);
+        // begin = sp.getInt(bookPath + "begin", 1);
+        float fPercent = (float) (begin * 1.0 / bookPageFactory.getM_mbBufLen());
+        DecimalFormat df = new DecimalFormat("#0");
+        String strPercent = df.format(fPercent * 100) + "%";
+        markEdit4.setText(strPercent);
+        seekBar4.setProgress(Integer.parseInt(df.format(fPercent * 100)));
+        seekBar4.setOnSeekBarChangeListener(this);
+        jumpOk.setOnClickListener(this);
+        jumpCancel.setOnClickListener(this);
+
+    }
+
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
@@ -496,6 +587,35 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
                 bookPageFactory.setM_fontSize(fontsize);
                 bookPageFactory.setM_mbBufBegin(begin);
                 bookPageFactory.setM_mbBufEnd(begin);
+                postInvalidateUI();
+                break;
+            // 亮度进度条
+            case R.id.seekBar_light:
+                light = seekBar2.getProgress();
+                setLight();
+                lp.screenBrightness = light / 10.0f < 0.01f ? 0.01f : light / 10.0f;
+                getWindow().setAttributes(lp);
+                break;
+            // 跳转进度条
+            case R.id.seekBar_jump:
+                int s = seekBar4.getProgress();
+                markEdit4.setText(s + "%");
+                begin = (bookPageFactory.getM_mbBufLen() * s) / 100;
+                editor.putInt(bookPath + "begin", begin).commit();
+                bookPageFactory.setM_mbBufBegin(begin);
+                bookPageFactory.setM_mbBufEnd(begin);
+                //100%的位置不能作为起点
+                try {
+                    if (s == 100) {
+                        bookPageFactory.prePage();
+                        bookPageFactory.getM_mbBufBegin();
+                        begin = bookPageFactory.getM_mbBufEnd();
+                        bookPageFactory.setM_mbBufBegin(begin);
+                        bookPageFactory.setM_mbBufBegin(begin);
+                    }
+                } catch (IOException e) {
+                    Log.e(TAG, "onProgressChanged seekBar4-> IOException error", e);
+                }
                 postInvalidateUI();
                 break;
         }

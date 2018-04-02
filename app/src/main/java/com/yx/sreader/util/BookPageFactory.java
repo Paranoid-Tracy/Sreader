@@ -449,7 +449,7 @@ public class BookPageFactory {
         m_book_bg = BG;
     }
     public int getM_fontSize() {
-        return this.m_fontSize; //2016.1.4
+        return this.m_fontSize;
     }
     public int getM_mbBufBegin() {
         return m_mbBufBegin;
@@ -485,4 +485,12 @@ public class BookPageFactory {
         m_lines = pageDown();
     }
 
+    public int getM_mbBufEnd() {
+        return m_mbBufEnd;
+    }
+
+
+    public static int getM_mbBufLen() {
+        return m_mbBufLen;
+    }
 }
