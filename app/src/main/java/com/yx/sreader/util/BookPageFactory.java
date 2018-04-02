@@ -70,6 +70,7 @@ public class BookPageFactory {
     private int m_backColor = 0xffff9e85; // 背景颜色
     private Paint mBatterryPaint ;
     private float mBorderWidth;
+    private int beforeLen;
 
 
 
@@ -159,8 +160,15 @@ public class BookPageFactory {
             ReadActivity.words=word.toString();
             word=null;
         }
+        beforeLen = m_mbBufEnd - m_mbBufBegin;
         //画进度和时间
         int dataWith = (int) (mBatterryPaint.measureText((date)+mBorderWidth));
+        float fPerent = (float) (m_mbBufBegin * 1.0 / m_mbBufLen);
+        String strPercent = df.format(fPerent * 100) + "%";
+        int nPercentWidth = (int) mBatterryPaint.measureText("999.9%") + 1;    //Paint.measureText直接返回参数占有的宽度
+        c.drawText(strPercent, mWidth - nPercentWidth, mHeight - 10, mBatterryPaint);//x y为坐标值
+        c.drawText(date, marginWidth ,mHeight-10, mBatterryPaint);
+
     }
 
     protected Vector<String> pageDown() {
@@ -362,7 +370,7 @@ public class BookPageFactory {
 
             }
             lines.addAll(0, paraLines);
-            lines.add("\n\n");
+            //lines.add("\n\n");
 
             if(lines.size() > mLineCount) {
                 //  break;
@@ -394,6 +402,8 @@ public class BookPageFactory {
         } else
             m_isfirstPage = false;
         m_lines.clear();
+       /* m_mbBufEnd = m_mbBufBegin - beforeLen;
+        m_mbBufBegin = m_mbBufEnd;*/
         pageUp();
         m_lines = pageDown();
 
