@@ -139,7 +139,7 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
         bookPath = intent.getStringExtra("bookpath");
         bookName = intent.getStringExtra("bookname");
         ccc = intent.getStringExtra("ccc");
-        begin1 = intent.getIntExtra("bigin", 0);
+        begin1 = intent.getIntExtra("begin", 0);
         if(begin1 == 0) {
             begin = sp.getInt(bookPath + "begin", 0);
         }else {
@@ -166,7 +166,7 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
             //bookPageFactory.setM_fontSize(fontsize);
             bookPageFactory.onDraw(mCurPageCanvas);
             // Log.d("ReadActivity", "sp中的size" + size);
-            //word = pagefactory.getFirstTwoLineText();// 获取当前阅读位置的前两行文字,用作书签
+            word = bookPageFactory.getFirstTwoLineText();// 获取当前阅读位置的前两行文字,用作书签
             //editor.putInt(bookPath + "begin", begin).apply();
             // Log.d("ReadActivity", "第一页首两行文字是" + word);
 
@@ -609,9 +609,11 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
                     if (s == 100) {
                         bookPageFactory.prePage();
                         bookPageFactory.getM_mbBufBegin();
-                        begin = bookPageFactory.getM_mbBufEnd();
+                        begin = bookPageFactory.getM_mbBufBegin();
+                        editor.putInt(bookPath + "begin",begin).commit();
                         bookPageFactory.setM_mbBufBegin(begin);
-                        bookPageFactory.setM_mbBufBegin(begin);
+                        //bookPageFactory.setM_mbBufBegin(begin);
+
                     }
                 } catch (IOException e) {
                     Log.e(TAG, "onProgressChanged seekBar4-> IOException error", e);
