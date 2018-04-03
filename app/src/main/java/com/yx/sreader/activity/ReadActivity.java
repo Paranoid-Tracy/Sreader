@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -379,8 +380,12 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
                     case 2:
                         clickLight();
                         break;
+                    case 3:
+                        clickBookMarks();
+                        break;
                     case 4:
                         clickJump();
+                        break;
 
                 }
 
@@ -399,8 +404,12 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
                 case 2:
                     clickLight();
                     break;
+                case 3:
+                    clickBookMarks();
+                    break;
                 case 4:
                     clickJump();
+                    break;
 
             }
 
@@ -443,11 +452,32 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
                 curPos = 2;
                 setToolPop(curPos);
                 break;
+            // 书签按钮
+            case R.id.bookBtn_mark:
+                curPos = 3;
+                setToolPop(curPos);
+                break;
             //跳转
             case R.id.bookBtn_jump:
                 curPos = 4;
                 setToolPop(curPos);
                 jumpcencel_begin = begin;
+                break;
+            //跳转确定按钮
+            case R.id.jump_ok:
+                clear();
+                hideSystemUI();
+                bookPageFactory.setM_mbBufBegin(begin);
+                bookPageFactory.setM_mbBufEnd(begin);
+                postInvalidateUI();
+                break;
+            //跳转取消按钮
+            case R.id.jump_cancel:
+                clear();
+                hideSystemUI();
+                bookPageFactory.setM_mbBufBegin(jumpcencel_begin);
+                bookPageFactory.setM_mbBufEnd(jumpcencel_begin);
+                postInvalidateUI();
                 break;
             // 夜间模式按钮
             case R.id.imageBtn_light:
@@ -475,6 +505,9 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
                 bookPageFactory.setM_mbBufBegin(begin);
                 bookPageFactory.setM_mbBufEnd(begin);
                 postInvalidateUI();
+                break;
+            case R.id.pop_return:
+                finish();
                 break;
         }
     }
@@ -581,9 +614,27 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
         linghtDecrease.setTypeface(typeface);
         getLight();
         seekBar2.setProgress(light);
-        System.out.print("亮度" + light);
+        //System.out.print("亮度" + light);
         seekBar2.setOnSeekBarChangeListener(this);
 
+    }
+
+    /**
+     * 点击书签
+     */
+    private void clickBookMarks(){
+        mToolpop3.setBackgroundDrawable(new ColorDrawable(0xb0000000));
+        if(CommonUtil.getBottomStatusHeight(mContext)!=0) {
+            int popofset = 120 + CommonUtil.getBottomStatusHeight(mContext);
+            mToolpop3.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, popofset);
+        }else
+            mToolpop3.showAtLocation(mPageWidget, Gravity.BOTTOM, 0, 120);
+        btn_mark_add = (TextView) toolpop3.findViewById(R.id.Btn_mark_add);
+        btn_mark_my = (TextView) toolpop3.findViewById(R.id.Btn_mark_my);
+        btn_mark_add.setTypeface(typeface);
+        btn_mark_my.setTypeface(typeface);
+        btn_mark_add.setOnClickListener(this);
+        btn_mark_my.setOnClickListener(this);
     }
 
     /**
@@ -665,6 +716,15 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
 
+    }
+    /**
+     * 记录数据 并清空popupwindow
+     */
+    private void clear() {
+
+        show = false;
+        mPopupWindow.dismiss();
+        popDismiss();
     }
 
     @Override
