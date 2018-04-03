@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3"><dataSet config="main"><source path="/Users/iss/AndroidStudioProjects/Sreader/libraries/SlidingMenu/library/assets"/><source path="/Users/iss/AndroidStudioProjects/Sreader/libraries/SlidingMenu/library/build/generated/assets/shaders/release"/></dataSet><dataSet config="release"><source path="/Users/iss/AndroidStudioProjects/Sreader/libraries/SlidingMenu/library/src/release/assets"/></dataSet></merger>

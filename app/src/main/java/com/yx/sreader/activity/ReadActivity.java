@@ -28,6 +28,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.yx.sreader.R;
 import com.yx.sreader.util.BookPageFactory;
 import com.yx.sreader.util.CommonUtil;
@@ -36,11 +37,14 @@ import com.yx.sreader.view.PageWidget;
 import java.io.IOException;
 import java.text.DecimalFormat;
 
+
+
+
 /**
  * Created by iss on 2018/3/29.
  */
 
-public class ReadActivity extends AppCompatActivity implements View.OnClickListener ,SeekBar.OnSeekBarChangeListener{
+public class ReadActivity extends AppCompatActivity implements View.OnClickListener ,SeekBar.OnSeekBarChangeListener,SlidingMenu.OnCloseListener,SlidingMenu.OnOpenListener{
 
     private static final String TAG = "ReadActivity";
     public static String words;
@@ -86,10 +90,8 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
     private TextView markEdit4;
     private Boolean isNight; // 白天和晚上
     private ImageButton imageBtn_light,pop_return ;
-
-
-
-
+    private SlidingMenu mSlidingMenu;
+    private View iv_filter;
 
 
 
@@ -99,6 +101,17 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_read);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);//保存屏幕常亮
         hideSystemUI();
+        iv_filter = (View)this.findViewById(R.id.cover);
+        //StatusBarCompat.setStatusBarColor(this, R.color.read_background_paperYellow, false);
+        mSlidingMenu = new SlidingMenu(this);
+        mSlidingMenu.setFadeEnabled(true);
+        mSlidingMenu.setFadeDegree(0.4f);
+        mSlidingMenu.setMode(SlidingMenu.LEFT);     //设置从左弹出/滑出SlidingMenu
+        mSlidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);   //设置占满屏幕
+        mSlidingMenu.attachToActivity(this,SlidingMenu.SLIDING_WINDOW);    //绑定到哪一个Activity对象
+        mSlidingMenu.setMenu(R.layout.slidingmenulayout);                   //设置弹出的SlidingMenu的布局文件
+        mSlidingMenu.setBehindOffsetRes(R.dimen.sliding_menu_offset);       //设置SlidingMenu所占的偏移
+        mSlidingMenu.setOnCloseListener(this);
         mContext = this.getBaseContext();
         typeface = Typeface.createFromAsset(getApplicationContext().getAssets(),"font/QH.ttf");
         scale = (int)mContext.getResources().getDisplayMetrics().density;
@@ -255,8 +268,8 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
         });
 
 
-
     }
+
     /**
      * 隐藏菜单。沉浸式阅读
      */
@@ -506,11 +519,30 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
                 bookPageFactory.setM_mbBufEnd(begin);
                 postInvalidateUI();
                 break;
+            //顶部返回按钮
             case R.id.pop_return:
                 finish();
                 break;
+            //我的书签
+            case R.id.Btn_mark_my:
+
+                if (iv_filter.isShown())
+                    iv_filter.setVisibility(View.GONE);
+                else {
+                    iv_filter.setVisibility(View.VISIBLE);
+                }
+                mSlidingMenu.toggle(true);
+                if (show) {
+                    show = false;
+                    hideSystemUI();
+                    mPopupWindow.dismiss();
+                    popDismiss();
+                }
+                break;
+
         }
     }
+
 
     /**
      * 记录配置文件中字体大小
@@ -734,6 +766,17 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onClose() {
+        if (iv_filter.isShown())
+            iv_filter.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onOpen() {
 
     }
 }
