@@ -11,8 +11,11 @@ import android.graphics.Point;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -28,8 +31,10 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.astuetz.PagerSlidingTabStrip;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.yx.sreader.R;
+import com.yx.sreader.adapter.MyPagerAdapter;
 import com.yx.sreader.util.BookPageFactory;
 import com.yx.sreader.util.CommonUtil;
 import com.yx.sreader.view.PageWidget;
@@ -92,6 +97,11 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
     private ImageButton imageBtn_light,pop_return ;
     private SlidingMenu mSlidingMenu;
     private View iv_filter;
+
+    private PagerSlidingTabStrip pagerSlidingTabStrip;
+    private DisplayMetrics dm;
+    private ImageButton button_back;
+    private TextView title;
 
 
 
@@ -267,6 +277,8 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
+        initSliding();
+
 
     }
 
@@ -328,14 +340,14 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
         readLight = (TextView) popupWindow.findViewById(R.id.bookBtn_light);
         bookMark = (TextView) popupWindow.findViewById(R.id.bookBtn_mark);
         readJump = (TextView) popupWindow.findViewById(R.id.bookBtn_jump);
-        readSet = (TextView) popupWindow.findViewById(R.id.readSet);
+        //readSet = (TextView) popupWindow.findViewById(R.id.readSet);
         layout = (LinearLayout) popupWindow.findViewById(R.id.bookpop_bottom);//主要为了夜间模式时设置背景
         //System.out.println("高度"+layout.getTop());
         fontSize.setTypeface(typeface);//设置字体
         readLight.setTypeface(typeface);
         bookMark.setTypeface(typeface);
         readJump.setTypeface(typeface);
-        readSet.setTypeface(typeface);
+        //readSet.setTypeface(typeface);
         TextView blank_view = (TextView) popupWindow.findViewById(R.id.blank_view);
         pop_return = (ImageButton) popupWindow.findViewById(R.id.pop_return);
         imageBtn_light = (ImageButton) popupWindow.findViewById((R.id.imageBtn_light));
@@ -351,7 +363,7 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
         readLight.setOnClickListener(this);
         bookMark.setOnClickListener(this);
         readJump.setOnClickListener(this);
-        readSet.setOnClickListener(this);
+        //readSet.setOnClickListener(this);
         blank_view.setOnClickListener(this);
         pop_return.setOnClickListener(this);
         imageBtn_light.setOnClickListener(this);
@@ -757,6 +769,54 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
         show = false;
         mPopupWindow.dismiss();
         popDismiss();
+    }
+
+    /**
+     * 初始化SlidingMenu
+     */
+    private void initSliding(){
+        dm = getResources().getDisplayMetrics();
+        typeface = Typeface.createFromAsset(this.getAssets(),"font/QH.ttf");
+        button_back = (ImageButton) findViewById(R.id.back);
+        title = (TextView) findViewById(R.id.bookname);
+        ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
+        pagerSlidingTabStrip = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+        setTabsValue();
+        viewPager.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
+        pagerSlidingTabStrip.setViewPager(viewPager);
+        button_back.setOnClickListener(this);
+        title.setText("书名");
+        title.setTypeface(typeface);
+
+    }
+
+    /**
+     * 设置切换栏菜单文字样式
+     */
+    private void setTabsValue() {
+        // 设置Tab是自动填充满屏幕的
+        pagerSlidingTabStrip.setShouldExpand(true);//所有初始化要在setViewPager方法之前
+        // 设置Tab的分割线是透明的
+        pagerSlidingTabStrip.setDividerColor(Color.TRANSPARENT);
+        // 设置Tab底部线的高度
+        pagerSlidingTabStrip.setUnderlineHeight((int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 1, dm));
+        // 设置Tab Indicator的高度
+        pagerSlidingTabStrip.setIndicatorHeight((int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 4, dm));
+        // 设置Tab标题文字的大小
+        pagerSlidingTabStrip.setTextSize((int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_SP, 16, dm));
+        //设置Tab标题文字的字体
+        pagerSlidingTabStrip.setTypeface(typeface,0);
+        // 设置Tab Indicator的颜色
+        pagerSlidingTabStrip.setIndicatorColor(Color.parseColor("#45c01a"));
+        // 设置选中Tab文字的颜色 (这是我自定义的一个方法)
+        //    pagerSlidingTabStrip.setSelectedTextColor(Color.parseColor("#45c01a"));
+        // 取消点击Tab时的背景色
+        pagerSlidingTabStrip.setTabBackground(0);
+
+        // pagerSlidingTabStrip.setDividerPadding(18);
     }
 
     @Override

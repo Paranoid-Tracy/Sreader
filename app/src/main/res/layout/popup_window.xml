@@ -95,7 +95,7 @@
         android:drawableTop="@drawable/reader_jump_to"
         android:gravity="center"
         android:text="@string/bookpop_send" />
-    <TextView
+    <!--<TextView
         style="@style/text_style"
         android:layout_marginTop="1dp"
         android:id="@+id/readSet"
@@ -104,7 +104,7 @@
         android:layout_weight="1"
         android:drawableTop="@drawable/directory"
         android:gravity="center"
-        android:text="@string/bookpop_dir" />
+        android:text="@string/bookpop_dir" />-->
         </LinearLayout>
 
 
