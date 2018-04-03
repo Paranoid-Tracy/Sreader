@@ -61,7 +61,6 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
     private static Bitmap mCurPageBitmap, mNextPageBitmap;
     public static Canvas mCurPageCanvas, mNextPageCanvas;
     private PageWidget mPageWidget;
-    private Boolean isNight; // 亮度模式,白天和晚上
     private BookPageFactory bookPageFactory;
     public static SharedPreferences sp;
     public static SharedPreferences.Editor editor;
@@ -84,6 +83,10 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
     private TextView jumpOk, jumpCancel,fontBig,fontSmall;
     private static int jumpcencel_begin;
     private TextView markEdit4;
+    private Boolean isNight; // 白天和晚上
+    private ImageButton imageBtn_light,pop_return ;
+
+
 
 
 
@@ -145,14 +148,11 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
         }else {
             begin = begin1;
         }
-        if (false) {
-            /*pagefactory.setBgBitmap(BookPageFactory.decodeSampledBitmapFromResource(
+        if (isNight) {
+            bookPageFactory.setBgBitmap(BookPageFactory.decodeSampledBitmapFromResource(
                     this.getResources(), R.drawable.main_bg, screenWidth, readHeight));
-            pagefactory.setM_textColor(Color.rgb(128, 128, 128));*/
+            bookPageFactory.setM_textColor(Color.rgb(128, 128, 128));
         } else {
-            //bookPageFactory.setBgBitmap(BitmapFactory.decodeResource(this.getResources(), R.drawable.bg));
-            //bookPageFactory.setBgBitmap(BookPageFactory.decodeSampledBitmapFromResource(
-            //   this.getResources(),R.drawable.bg,screenWidth,readHeight));
             Bitmap bmp = Bitmap.createBitmap(screenWidth,screenHeight, Bitmap.Config.RGB_565);
             Canvas canvas = new Canvas(bmp);
             canvas.drawColor(getResources().getColor(R.color.read_background_paperYellow));
@@ -323,25 +323,24 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
         readJump.setTypeface(typeface);
         readSet.setTypeface(typeface);
         TextView blank_view = (TextView) popupWindow.findViewById(R.id.blank_view);
-       /* pop_return = (ImageButton) popupwindwow.findViewById(R.id.pop_return);
-        imageBtn_light = (ImageButton) popupwindwow.findViewById((R.id.imageBtn_light));
+        pop_return = (ImageButton) popupWindow.findViewById(R.id.pop_return);
+        imageBtn_light = (ImageButton) popupWindow.findViewById((R.id.imageBtn_light));
         getDayOrNight();
         if (isNight) {
-            layout.setBackgroundResource(R.drawable.tmall_bar_bg);
+            //layout.setBackgroundResource(R.drawable.tmall_bar_bg);
             imageBtn_light.setImageResource(R.drawable.menu_light_icon2);
         } else {
-            layout.setBackgroundResource(R.drawable.tmall_bar_bg);
+            //layout.setBackgroundResource(R.drawable.tmall_bar_bg);
             imageBtn_light.setImageResource(R.drawable.menu_daynight_icon);
-        }*/
+        }
         fontSize.setOnClickListener(this);
         readLight.setOnClickListener(this);
         bookMark.setOnClickListener(this);
         readJump.setOnClickListener(this);
         readSet.setOnClickListener(this);
         blank_view.setOnClickListener(this);
-       /* listener_book.setOnClickListener(this);
         pop_return.setOnClickListener(this);
-        imageBtn_light.setOnClickListener(this);*/
+        imageBtn_light.setOnClickListener(this);
 
 
     }
@@ -450,6 +449,33 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
                 setToolPop(curPos);
                 jumpcencel_begin = begin;
                 break;
+            // 夜间模式按钮
+            case R.id.imageBtn_light:
+                if (isNight) {
+                    isNight = false;
+                    //layout.setBackgroundResource(R.drawable.tmall_bar_bg);
+                    bookPageFactory.setM_textColor(Color.rgb(50, 65, 78));
+                    imageBtn_light.setImageResource(R.drawable.menu_daynight_icon);
+
+                    // pagefactory.setBgBitmap(BitmapFactory.decodeResource(
+                    //         this.getResources(), R.drawable.bg));
+                    Bitmap bmp=Bitmap.createBitmap(screenWidth,screenHeight, Bitmap.Config.RGB_565);
+                    Canvas canvas=new Canvas(bmp);
+                    canvas.drawColor(Color.rgb(250,249,222));
+                    bookPageFactory.setBgBitmap(bmp);
+                } else {
+                    isNight = true;
+                    //layout.setBackgroundResource(R.drawable.tmall_bar_bg);
+                    bookPageFactory.setM_textColor(Color.rgb(128, 128, 128));
+                    imageBtn_light.setImageResource(R.drawable.menu_light_icon2);
+                    bookPageFactory.setBgBitmap(BitmapFactory.decodeResource(
+                            this.getResources(), R.drawable.main_bg));
+                }
+                setDayOrNight();
+                bookPageFactory.setM_mbBufBegin(begin);
+                bookPageFactory.setM_mbBufEnd(begin);
+                postInvalidateUI();
+                break;
         }
     }
 
@@ -477,6 +503,23 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
             editor.apply();
         } catch (Exception e) {
             Log.e(TAG, "setLight-> Exception error", e);
+        }
+    }
+
+    /**
+     * 设置夜间还是白天阅读模式
+     *
+     * */
+    private void setDayOrNight () {
+        try {
+            if (isNight) {
+                editor.putBoolean("night", true);
+            } else {
+                editor.putBoolean("night", false);
+            }
+            editor.apply();
+        }catch (Exception e) {
+            Log.e(TAG, "setDayOrNight-> Exception error", e);
         }
     }
 
