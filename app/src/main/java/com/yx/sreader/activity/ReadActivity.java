@@ -187,17 +187,17 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
         mPageWidget.setBitmaps(mCurPageBitmap, mCurPageBitmap);
         try {
             bookPageFactory.openbook(bookPath, begin);
-            //bookPageFactory.setM_fontSize(fontsize);
+            bookPageFactory.setM_fontSize(fontsize);
             bookPageFactory.onDraw(mCurPageCanvas);
-            // Log.d("ReadActivity", "sp中的size" + size);
+             //Log.d("ReadActivity", "sp中的size" + size);
             word = bookPageFactory.getFirstTwoLineText();// 获取当前阅读位置的前两行文字,用作书签
-            //editor.putInt(bookPath + "begin", begin).apply();
-            // Log.d("ReadActivity", "第一页首两行文字是" + word);
+            editor.putInt(bookPath + "begin", begin).apply();
+             Log.d("ReadActivity", "第一页首两行文字是" + word);
 
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    //pagefactory.getBookInfo();  //获取章节目录
+                    bookPageFactory.getBookInfo();  //获取章节目录
                 }
             }).start();
         } catch (IOException e1) {
@@ -817,6 +817,9 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
         pagerSlidingTabStrip.setTabBackground(0);
 
         // pagerSlidingTabStrip.setDividerPadding(18);
+    }
+    public static String getBookPath() {
+        return bookPath;
     }
 
     @Override

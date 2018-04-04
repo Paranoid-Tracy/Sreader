@@ -4,6 +4,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.yx.sreader.activity.ReadActivity;
+import com.yx.sreader.fragment.BookMarkFragment;
 import com.yx.sreader.fragment.CatalogueFragment;
 
 /**
@@ -15,6 +17,7 @@ public class MyPagerAdapter extends FragmentPagerAdapter {
     private final String[] titles = { "目录", "书签"};
 
     CatalogueFragment catalogueFragment;
+    BookMarkFragment bookMarkFragment;
 
     public MyPagerAdapter(FragmentManager fm) {
         super(fm);
@@ -27,10 +30,10 @@ public class MyPagerAdapter extends FragmentPagerAdapter {
                 if (catalogueFragment == null) {
                     //  bookMarkFragment = new BookMarkFragment();
                     //创建bookMarkFragment实例时同时把需要intent中的值传入
-                    //catalogueFragment = CatalogueFragment.newInstance(MarkActivity.getBookpath_intent());
+                    catalogueFragment = CatalogueFragment.newInstance(ReadActivity.getBookPath());
                     // bookMarkFragment = BookMarkFragment.newInstance(MarkActivity.getBookpath_intent());
                 }
-                catalogueFragment = new CatalogueFragment();
+                //catalogueFragment = new CatalogueFragment();
                 return catalogueFragment;
 
             case 1:
@@ -39,8 +42,8 @@ public class MyPagerAdapter extends FragmentPagerAdapter {
                     //  catalogueFragment = CatalogueFragment.newInstance(MarkActivity.getBookpath_intent());
                     bookMarkFragment = BookMarkFragment.newInstance(MarkActivity.getBookpath_intent());
                 }*/
-                catalogueFragment = new CatalogueFragment();
-                return catalogueFragment;
+                bookMarkFragment = new BookMarkFragment();
+                return bookMarkFragment;
             default:
                 return null;
         }

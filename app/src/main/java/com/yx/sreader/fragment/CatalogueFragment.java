@@ -8,10 +8,13 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.yx.sreader.R;
+import com.yx.sreader.adapter.CatalogueAdapter;
+import com.yx.sreader.database.BookCatalogue;
 
 import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by iss on 2018/4/3.
@@ -21,6 +24,7 @@ public class CatalogueFragment extends Fragment {
     private ListView catalogueListView;
     private String mArgument;
     public static final String ARGUMENT = "argument";
+    private List<BookCatalogue> bookCatalogueList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -32,10 +36,10 @@ public class CatalogueFragment extends Fragment {
         if (bundle != null) {
             mArgument = bundle.getString(ARGUMENT);
         }
-        /*bookCatalogueList = new ArrayList<>();
+        bookCatalogueList = new ArrayList<>();
         bookCatalogueList = DataSupport.where("bookpath = ?", mArgument).find(BookCatalogue.class);
         CatalogueAdapter catalogueAdapter = new CatalogueAdapter(getActivity(),bookCatalogueList);
-        catalogueListView.setAdapter(catalogueAdapter);*/
+        catalogueListView.setAdapter(catalogueAdapter);
         return view;
     }
     public static CatalogueFragment newInstance(String argument) {
