@@ -37,12 +37,12 @@ public class MyPagerAdapter extends FragmentPagerAdapter {
                 return catalogueFragment;
 
             case 1:
-                /*if (bookMarkFragment == null) {
+                if (bookMarkFragment == null) {
                     //catalogueFragment = new CatalogueFragment();
                     //  catalogueFragment = CatalogueFragment.newInstance(MarkActivity.getBookpath_intent());
-                    bookMarkFragment = BookMarkFragment.newInstance(MarkActivity.getBookpath_intent());
-                }*/
-                bookMarkFragment = new BookMarkFragment();
+                    bookMarkFragment = BookMarkFragment.newInstance(ReadActivity.getBookPath());
+                }
+                //bookMarkFragment = new BookMarkFragment();
                 return bookMarkFragment;
             default:
                 return null;

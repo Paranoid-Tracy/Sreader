@@ -69,6 +69,14 @@ public class CommonUtil {
         return outMetrics.heightPixels;
     }
 
+    public static int getScreenWidth(Context context){
+        WindowManager wm = (WindowManager) context
+                .getSystemService(Context.WINDOW_SERVICE);
+        DisplayMetrics outMetrics = new DisplayMetrics();
+        wm.getDefaultDisplay().getMetrics(outMetrics);
+        return outMetrics.widthPixels;
+    }
+
     /**
      * 标题栏高度
      * @return
@@ -154,6 +162,10 @@ public class CommonUtil {
     public static float px2sp(Context context, float pxVal)
     {
         return (pxVal / context.getResources().getDisplayMetrics().scaledDensity);
+    }
+    public static float calcuPro(float pix){
+        float proportion = (pix - 50 )/ pix;
+        return proportion;
     }
 }
 

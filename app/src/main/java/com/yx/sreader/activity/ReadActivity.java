@@ -579,7 +579,7 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
                         Toast.makeText(ReadActivity.this, "书签添加成功", Toast.LENGTH_SHORT).show();
                     }
                 } catch (SQLException e) {
-                    Toast.makeText(ReadActivity.this, "该书签已存在", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ReadActivity.this, "添加书签失败", Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
                     Toast.makeText(ReadActivity.this, "添加书签失败", Toast.LENGTH_SHORT).show();
                 }
