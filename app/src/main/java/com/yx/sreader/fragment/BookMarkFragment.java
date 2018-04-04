@@ -108,6 +108,16 @@ public class BookMarkFragment extends Fragment implements AdapterView.OnItemClic
         deleteMarkPop.showAsDropDown(view, 0, -view.getHeight() - popHeight);
     }
 
+    /**
+     * 删除后重新从数据库获取数据
+     */
+    private void notifyDataRefresh () {
+        bookMarksList = new ArrayList<>();
+        bookMarksList = DataSupport.where("bookpath = ?", mArgument).find(BookMarks.class);
+        MarkAdapter markAdapter = new MarkAdapter(getActivity(),bookMarksList);
+        markListview.setAdapter(markAdapter);
+        markAdapter.notifyDataSetChanged();
+    }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -126,6 +136,23 @@ public class BookMarkFragment extends Fragment implements AdapterView.OnItemClic
 
     @Override
     public void onClick(View v) {
-
+        switch (v.getId()) {
+            //删除单个书签
+            case R.id.delete_mark_tv:
+                int id = bookMarksList.get(itemPosition).getId();
+                DataSupport.delete(BookMarks.class,id);
+                notifyDataRefresh();
+                // Log.d("bookmarkfragment","删除书签");
+                deleteMarkPop.dismiss();
+                break;
+            //删除全部书签
+            case R.id.delte_allmark_tv:
+                // Log.d("bookmarkfragment","清空书签");
+                String bookpath = bookMarksList.get(itemPosition).getBookpath();
+                DataSupport.deleteAll(BookMarks.class,"bookpath = ?",bookpath);
+                notifyDataRefresh();
+                deleteMarkPop.dismiss();
+                break;
+        }
     }
 }
