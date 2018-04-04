@@ -3,6 +3,7 @@ package com.yx.sreader.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.SQLException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -35,14 +36,18 @@ import com.astuetz.PagerSlidingTabStrip;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.yx.sreader.R;
 import com.yx.sreader.adapter.MyPagerAdapter;
+import com.yx.sreader.database.BookMarks;
 import com.yx.sreader.util.BookPageFactory;
 import com.yx.sreader.util.CommonUtil;
 import com.yx.sreader.view.PageWidget;
 
+import org.litepal.crud.DataSupport;
+
 import java.io.IOException;
 import java.text.DecimalFormat;
-
-
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -551,7 +556,34 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
                     popDismiss();
                 }
                 break;
-
+            // 添加书签按钮
+            case R.id.Btn_mark_add:
+                word = word.trim();
+                while (word.startsWith(" ")) {
+                    word.substring(1,word.length()).trim();
+                }
+                BookMarks bookMarks = new BookMarks();
+                List<BookMarks> bookMarks1 = DataSupport.where("text = ?",word).find(BookMarks.class);
+                try {
+                    if(!bookMarks1.isEmpty()){
+                        Toast.makeText(ReadActivity.this, "该书签已存在", Toast.LENGTH_SHORT).show();
+                    }else {
+                        SimpleDateFormat sf = new SimpleDateFormat(
+                                "yyyy-MM-dd HH:mm ss");
+                        String time = sf.format(new Date());
+                        bookMarks.setTime(time);
+                        bookMarks.setBegin(begin);
+                        bookMarks.setText(word);
+                        bookMarks.setBookpath(bookPath);
+                        bookMarks.save();
+                        Toast.makeText(ReadActivity.this, "书签添加成功", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (SQLException e) {
+                    Toast.makeText(ReadActivity.this, "该书签已存在", Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    Toast.makeText(ReadActivity.this, "添加书签失败", Toast.LENGTH_SHORT).show();
+                }
+                break;
         }
     }
 
