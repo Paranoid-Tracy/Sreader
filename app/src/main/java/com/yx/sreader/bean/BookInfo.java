@@ -12,6 +12,7 @@ public class BookInfo {
     private String bookintroduction;
     private Image bookimage;
     private String bookpath;
+    private String author;
 
     public String getBookname() {
         return bookname;
@@ -43,5 +44,13 @@ public class BookInfo {
 
     public void setBookpath(String bookpath) {
         this.bookpath = bookpath;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
     }
 }

@@ -53,6 +53,7 @@ public class RecommendAdapter extends RecyclerView.Adapter {
         ViewHolder vh = (ViewHolder) holder;
         vh.bookname.setText(lists.get(position).getBookname());
         vh.bookintroduction.setText(lists.get(position).getBookintroduction());
+        vh.author.setText(lists.get(position).getAuthor());
         if (lists.get(position).getBookimage() == null) {
             Glide.with(mContext).load(R.drawable.cover_default).transform(new CornersTransform(mContext,50)).into(vh.bookimage);
         }
@@ -68,12 +69,14 @@ public class RecommendAdapter extends RecyclerView.Adapter {
         private OnRecItemClickListener onRecItemClickListener;
         private TextView bookname;
         private TextView bookintroduction;
+        private TextView author;
         private ImageView bookimage;
         public ViewHolder(View itemView,OnRecItemClickListener onRecItemClickListener) {
             super(itemView);
             bookname = (TextView)itemView.findViewById(R.id.tvRecommendTitle);
-            bookintroduction = (TextView)itemView.findViewById(R.id.tvRecommendShort);
+            bookintroduction = (TextView)itemView.findViewById(R.id.tvBookDetail);
             bookimage = (ImageView)itemView.findViewById(R.id.ivRecommendCover);
+            author = (TextView)itemView.findViewById(R.id.tvBookAuthor) ;
 
             //设置点击事件
             this.onRecItemClickListener = onRecItemClickListener;

@@ -64,6 +64,7 @@ public class PagerFragment extends Fragment {
             bookInfo = new BookInfo();
             bookInfo.setBookname("当前书名");
             bookInfo.setBookintroduction("这本书啦啦啦啦啦啦啦啦啦啦啦阿拉啦，好啊啊啊啊啊好 啊啊啊啊啊啊");
+            bookInfo.setAuthor("张飞");
             newList.add(0, bookInfo);
         }
         adapter.add(newList);
