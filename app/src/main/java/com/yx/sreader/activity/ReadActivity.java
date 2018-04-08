@@ -26,6 +26,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -35,8 +36,10 @@ import android.widget.Toast;
 import com.astuetz.PagerSlidingTabStrip;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.yx.sreader.R;
+import com.yx.sreader.adapter.MarkAdapter;
 import com.yx.sreader.adapter.MyPagerAdapter;
 import com.yx.sreader.database.BookMarks;
+import com.yx.sreader.fragment.BookMarkFragment;
 import com.yx.sreader.util.BookPageFactory;
 import com.yx.sreader.util.CommonUtil;
 import com.yx.sreader.view.PageWidget;
@@ -46,6 +49,7 @@ import org.litepal.crud.DataSupport;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -107,6 +111,8 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
     private DisplayMetrics dm;
     private ImageButton button_back;
     private TextView title;
+    private BookMarkFragment bookMarkFragment;
+    private ListView markListview;
 
 
 
@@ -281,9 +287,6 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
                 return false;
             }
         });
-
-        initSliding();
-
 
     }
 
@@ -576,6 +579,7 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
                         bookMarks.setText(word);
                         bookMarks.setBookpath(bookPath);
                         bookMarks.save();
+
                         Toast.makeText(ReadActivity.this, "书签添加成功", Toast.LENGTH_SHORT).show();
                     }
                 } catch (SQLException e) {
@@ -817,7 +821,7 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
         viewPager.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
         pagerSlidingTabStrip.setViewPager(viewPager);
         button_back.setOnClickListener(this);
-        title.setText("书名");
+        title.setText(bookName);
         title.setTypeface(typeface);
 
     }
@@ -873,5 +877,11 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onOpen() {
 
+    }
+
+    @Override
+    protected void onResume(){
+        initSliding();
+        super.onResume();
     }
 }

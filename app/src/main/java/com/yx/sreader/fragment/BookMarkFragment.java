@@ -1,6 +1,7 @@
 package com.yx.sreader.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -16,6 +17,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.yx.sreader.R;
+import com.yx.sreader.activity.ReadActivity;
 import com.yx.sreader.adapter.MarkAdapter;
 import com.yx.sreader.database.BookMarks;
 import com.yx.sreader.util.BookPageFactory;
@@ -41,6 +43,12 @@ public class BookMarkFragment extends Fragment implements AdapterView.OnItemClic
     private int itemPosition;
     private PopupWindow deleteMarkPop;
     private View delateMarkPopView;
+    private static int begin;
+    private String bookpath;
+
+    public BookMarkFragment(){
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -48,7 +56,7 @@ public class BookMarkFragment extends Fragment implements AdapterView.OnItemClic
         View view = inflater.inflate(R.layout.fragment_mark,container,false);
         markListview = (ListView) view.findViewById(R.id.marklistview);
         initDeleteMarkPop();
-        //markListview.setOnItemClickListener(this);
+        markListview.setOnItemClickListener(this);
         markListview.setOnItemLongClickListener(this);
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -58,6 +66,9 @@ public class BookMarkFragment extends Fragment implements AdapterView.OnItemClic
         bookMarksList = DataSupport.where("bookpath = ?",mArgument).find(BookMarks.class);
         MarkAdapter markAdapter = new MarkAdapter(getActivity(), bookMarksList);
         markListview.setAdapter(markAdapter);
+        if(!bookMarksList.isEmpty()) {
+            notifyDataRefresh();
+        }
         return view;
     }
 
@@ -72,6 +83,7 @@ public class BookMarkFragment extends Fragment implements AdapterView.OnItemClic
         bundle.putString(ARGUMENT, argument);
         BookMarkFragment bookMarkFragment = new BookMarkFragment();
         bookMarkFragment.setArguments(bundle);
+
         return bookMarkFragment;
     }
 
@@ -111,7 +123,7 @@ public class BookMarkFragment extends Fragment implements AdapterView.OnItemClic
     /**
      * 删除后重新从数据库获取数据
      */
-    private void notifyDataRefresh () {
+    public void notifyDataRefresh () {
         bookMarksList = new ArrayList<>();
         bookMarksList = DataSupport.where("bookpath = ?", mArgument).find(BookMarks.class);
         MarkAdapter markAdapter = new MarkAdapter(getActivity(),bookMarksList);
@@ -121,7 +133,19 @@ public class BookMarkFragment extends Fragment implements AdapterView.OnItemClic
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+        if(deleteMarkPop.isShowing()) {
+            deleteMarkPop.dismiss();
+        }else {
+            begin = bookMarksList.get(position).getBegin();
+            bookpath = bookMarksList.get(position).getBookpath();
+            Intent intent = new Intent();
+            intent.setClass(getActivity(), ReadActivity.class);
+            intent.putExtra("begin", begin);
+            intent.putExtra("bookpath", bookpath);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            getActivity().overridePendingTransition(android.support.v7.appcompat.R.anim.abc_grow_fade_in_from_bottom, android.support.v7.appcompat.R.anim.abc_shrink_fade_out_from_bottom);
+        }
     }
 
     @Override
@@ -155,4 +179,21 @@ public class BookMarkFragment extends Fragment implements AdapterView.OnItemClic
                 break;
         }
     }
+
+    @Override
+    public void onStop(){
+        if(!bookMarksList.isEmpty()) {
+            notifyDataRefresh();
+        }
+        super.onStop();
+    }
+
+    @Override
+    public void onPause(){
+        if(!bookMarksList.isEmpty()) {
+            notifyDataRefresh();
+        }
+        super.onPause();
+    }
+
 }

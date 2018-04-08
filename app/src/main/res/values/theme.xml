@@ -44,4 +44,30 @@
         <item name="android:background">@drawable/bookshelf_layer_center</item>
 
     </style>
+
+    <style name="TabLayoutTextStyle" parent="TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse">
+        <item name="android:textSize">14dp</item>
+        <item name="android:textColor">#5E5E5E</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!--通用背景色-->
+    <color name="common_bg">@color/white</color>
+    <!--通用触摸背景色-->
+    <color name="common_touch_bg">#E3E3E3</color>
+    <!--通用背景色-->
+    <color name="common_gray_bg">#EEEEEE</color>
+    <!--通用一级标题的颜色-->
+    <color name="common_h1">#212121</color>
+    <!--通用二级标题的颜色-->
+    <color name="common_h2">#727272</color>
+    <!--通用三级标题的颜色-->
+    <color name="common_h3">#B2B2B2</color>
+    <!--通用分割线细-->
+    <color name="common_divider_narrow">#E3E3E3</color>
+    <!--通用分割线粗-->
+<!--
+    <color name="common_divider_wide">@color/light_white</color>
+-->
+
 </resources>
