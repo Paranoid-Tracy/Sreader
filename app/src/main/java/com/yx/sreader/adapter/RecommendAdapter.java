@@ -1,6 +1,7 @@
 package com.yx.sreader.adapter;
 
 import android.content.Context;
+import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,8 +13,10 @@ import com.bumptech.glide.Glide;
 import com.yx.sreader.OnRecItemClickListener;
 import com.yx.sreader.R;
 import com.yx.sreader.bean.BookInfo;
+import com.yx.sreader.service.WebService;
 import com.yx.sreader.util.CornersTransform;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,6 +28,7 @@ public class RecommendAdapter extends RecyclerView.Adapter {
     private OnRecItemClickListener onRecItemClickListener;
     private List<BookInfo> lists;
     private Context mContext;
+
 
     public RecommendAdapter(Context context,List<BookInfo> lists){
 
@@ -90,5 +94,6 @@ public class RecommendAdapter extends RecyclerView.Adapter {
             }
         }
     }
+
 
 }

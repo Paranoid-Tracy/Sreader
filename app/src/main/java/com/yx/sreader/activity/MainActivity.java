@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
     private static Boolean isExit = false;
     private static Handler handler = new Handler();
     private String info;
-    private List<String> bookinfo;
+    private static List<String> listbookinfo;
 
 
 
@@ -177,28 +177,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         }*//*
         return super.onOptionsItemSelected(item);
     }*/
-        private void init(){
-            new Thread(new MyThread()).start();
-        }
-
-    public List<String> getBookinfo() {
-        return bookinfo;
-    }
-
-    public class MyThread implements Runnable {
-        @Override
-        public void run() {
-            info = WebService.executeHttpGet("xiaoming");
-            // info = WebServicePost.executeHttpPost(username.getText().toString(), password.getText().toString());
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    System.out.printf("当前获取数据"+info);
-                    bookinfo = stringToList(info);
-                }
-            });
-        }
-    }
     public void getDatasync(){
         new Thread(new Runnable() {
             @Override
@@ -223,8 +201,34 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         }).start();
     }
 
+    private void init(){
+        new Thread(new MyThread()).start();
+    }
+
+    public static List<String> getListbookinfo() {
+        return listbookinfo;
+    }
+
+
+    public class MyThread implements Runnable {
+        @Override
+        public void run() {
+            info = WebService.executeHttpGet("xiaoming");
+            // info = WebServicePost.executeHttpPost(username.getText().toString(), password.getText().toString());
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    System.out.printf("当前获取数据"+info);
+                    listbookinfo = stringToList(info);
+                }
+            });
+        }
+    }
+
     private List<String> stringToList(String strs){
         String str[] = strs.split(",");
         return Arrays.asList(str);
     }
+
+
 }
