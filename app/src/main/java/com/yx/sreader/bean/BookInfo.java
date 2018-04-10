@@ -10,7 +10,7 @@ import android.widget.ImageView;
 public class BookInfo {
     private String bookname;
     private String bookintroduction;
-    private Image bookimage;
+    private String bookimage;
     private String bookpath;
     private String author;
 
@@ -30,11 +30,11 @@ public class BookInfo {
         this.bookintroduction = bookintroduction;
     }
 
-    public Image getBookimage() {
+    public String getBookimage() {
         return bookimage;
     }
 
-    public void setBookimage(Image bookimage) {
+    public void setBookimage(String bookimage) {
         this.bookimage = bookimage;
     }
 

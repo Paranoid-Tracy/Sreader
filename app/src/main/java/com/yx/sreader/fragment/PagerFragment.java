@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 
 import com.yx.sreader.OnRecItemClickListener;
 import com.yx.sreader.R;
+import com.yx.sreader.activity.BookDetailActivity;
 import com.yx.sreader.adapter.PagerAdapter;
 import com.yx.sreader.adapter.RecommendAdapter;
 import com.yx.sreader.bean.BookInfo;
@@ -63,15 +64,23 @@ public class PagerFragment extends Fragment {
         for(int i =0; i < 10; i++ ) {
             bookInfo = new BookInfo();
             bookInfo.setBookname("当前书名");
-            bookInfo.setBookintroduction("这本书啦啦啦啦啦啦啦啦啦啦啦阿拉啦，好啊啊啊啊啊好 啊啊啊啊啊啊");
+            bookInfo.setBookintroduction("这本书啦啦啦啦啦啦啦啦啦啦啦阿拉啦，好啊啊啊啊啊好 啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊" +
+                    "啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊");
             bookInfo.setAuthor("张飞");
+            bookInfo.setBookimage("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=4154742693,3551412937&fm=27&gp=0.jpg");
             newList.add(0, bookInfo);
         }
         adapter.add(newList);
         adapter.setOnItemClickListener(new OnRecItemClickListener() {
             @Override
             public void onClick(View view, int position) {
-
+                Intent i = new Intent(getContext(), BookDetailActivity.class);
+                i.putExtra("bookname",newList.get(position).getBookname());
+                i.putExtra("bookintroduction",newList.get(position).getBookintroduction());
+                i.putExtra("author",newList.get(position).getAuthor());
+                i.putExtra("bookpath",newList.get(position).getBookpath());
+                i.putExtra("bookimage",newList.get(position).getBookimage());
+                startActivity(i);
             }
         });
 

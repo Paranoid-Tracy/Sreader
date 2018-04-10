@@ -3,11 +3,13 @@ package com.yx.sreader.activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentContainer;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -21,10 +23,17 @@ import com.yx.sreader.R;
 import com.yx.sreader.adapter.ShelfAdapter;
 import com.yx.sreader.fragment.RecommendFragment;
 import com.yx.sreader.fragment.ShelfFragment;
+import com.yx.sreader.service.WebService;
 import com.yx.sreader.view.DragGridView;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 
 /**
@@ -38,6 +47,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
     private DragGridView bookshelf;
     private String mCurrentFragment;
     private static Boolean isExit = false;
+    private static Handler handler = new Handler();
+    private String info;
+    private List<String> bookinfo;
 
 
 
@@ -51,6 +63,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         initBotNavigationBar();
+        init();
+        //getDatasync();
 
     }
     public void initBotNavigationBar(){
@@ -163,4 +177,54 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         }*//*
         return super.onOptionsItemSelected(item);
     }*/
+        private void init(){
+            new Thread(new MyThread()).start();
+        }
+
+    public List<String> getBookinfo() {
+        return bookinfo;
+    }
+
+    public class MyThread implements Runnable {
+        @Override
+        public void run() {
+            info = WebService.executeHttpGet("xiaoming");
+            // info = WebServicePost.executeHttpPost(username.getText().toString(), password.getText().toString());
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    System.out.printf("当前获取数据"+info);
+                    bookinfo = stringToList(info);
+                }
+            });
+        }
+    }
+    public void getDatasync(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    OkHttpClient client = new OkHttpClient();//创建OkHttpClient对象
+                    Request request = new Request.Builder()
+                            .url("http://" + "172.23.0.168:8080" + "/BookInfo/BookLet?"+"xiaoming")//请求接口。如果需要传参拼接到接口后面。
+                            .build();//创建Request 对象
+                    Response response = null;
+                    response = client.newCall(request).execute();//得到Response 对象
+                    if (response.isSuccessful()) {
+                        Log.d("kwwl","response.code()=="+response.code());
+                        Log.d("kwwl","response.message()=="+response.message());
+                        Log.d("kwwl","res=="+response.body().string());
+                        //此时的代码执行在子线程，修改UI的操作请使用handler跳转到UI线程。
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    private List<String> stringToList(String strs){
+        String str[] = strs.split(",");
+        return Arrays.asList(str);
+    }
 }

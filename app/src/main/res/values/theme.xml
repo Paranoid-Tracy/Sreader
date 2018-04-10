@@ -51,6 +51,16 @@
         <item name="android:textStyle">normal</item>
     </style>
 
+    <style name="NoSpaceActionBarTheme" parent="Base.Widget.AppCompat.Toolbar">
+        <item name="contentInsetStart">0dp</item>
+        <item name="contentInsetStartWithNavigation">0dp</item>
+    </style>
+
+    作者：Conan_Lee
+    链接：https://www.jianshu.com/p/27563ef79c0e
+    來源：简书
+    著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+
     <!--通用背景色-->
     <color name="common_bg">@color/white</color>
     <!--通用触摸背景色-->

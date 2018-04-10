@@ -10,6 +10,8 @@
     <string name="bookpop_send">跳转</string>
     <string name="bookpop_dir">目录</string>
     <string name="press_twice_to_exit">连续点击两次退出</string>
+    <string name="book_detail_join_collection">开始下载&#160;&#160;&#160;&#160;&#160;&#160;</string>
+
 
 
 </resources>

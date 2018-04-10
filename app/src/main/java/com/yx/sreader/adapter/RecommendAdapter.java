@@ -54,9 +54,9 @@ public class RecommendAdapter extends RecyclerView.Adapter {
         vh.bookname.setText(lists.get(position).getBookname());
         vh.bookintroduction.setText(lists.get(position).getBookintroduction());
         vh.author.setText(lists.get(position).getAuthor());
-        if (lists.get(position).getBookimage() == null) {
-            Glide.with(mContext).load(R.drawable.cover_default).transform(new CornersTransform(mContext,50)).into(vh.bookimage);
-        }
+        //if (lists.get(position).getBookimage() == null) {
+            Glide.with(mContext).load(lists.get(position).getBookimage()).transform(new CornersTransform(mContext,50)).into(vh.bookimage);
+        //}
 
     }
 
