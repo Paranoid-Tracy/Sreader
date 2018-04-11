@@ -10,7 +10,6 @@
 
 
 
-
     <application
         android:name="org.litepal.LitePalApplication"
         android:allowBackup="true"
