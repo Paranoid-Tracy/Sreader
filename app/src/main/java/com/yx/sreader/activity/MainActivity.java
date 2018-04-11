@@ -21,6 +21,7 @@ import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.yx.sreader.R;
 import com.yx.sreader.adapter.ShelfAdapter;
+import com.yx.sreader.fragment.DownLoadFragment;
 import com.yx.sreader.fragment.RecommendFragment;
 import com.yx.sreader.fragment.ShelfFragment;
 import com.yx.sreader.service.WebService;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
     private BottomNavigationBar mBottomNavigationBar;
     private ShelfFragment mShelfFragment;
     private RecommendFragment mRecommendFragment;
+    private DownLoadFragment mDownLoadFragment;
     private DragGridView bookshelf;
     private String mCurrentFragment;
     private static Boolean isExit = false;
@@ -59,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         setContentView(R.layout.activity_main);
         mShelfFragment = new ShelfFragment();
         mRecommendFragment = new RecommendFragment();
+        mDownLoadFragment = new DownLoadFragment();
         getWindow().setBackgroundDrawable(null);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -98,9 +101,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
             case 1:
                 ft.replace(R.id.main_fragment, mRecommendFragment).commit();
                 break;
-           /* case 2:
-                ft.replace(R.id.main_fragment, videoFragment).commit();
-                break;*/
+            case 2:
+                ft.replace(R.id.main_fragment, mDownLoadFragment).commit();
+                break;
         }
     }
 
