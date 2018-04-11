@@ -17,6 +17,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Toast;
+
 
 import com.yx.sreader.R;
 import com.yx.sreader.activity.MainActivity;
@@ -64,18 +66,21 @@ public class ShelfFragment extends Fragment {
         bookShelf.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                BookList booklist = DataSupport.findFirst(BookList.class);
-                if(booklist!=null) {
-                    setBookViewPosition(itemPosition);
-                    adapter.setItemToFirst(itemPosition);
-                    String bookpath = bookLists.get(itemPosition).getBookpath();
-                    String bookname = bookLists.get(itemPosition).getBookname();
-                    Intent intent = new Intent();
-                    intent.setClass(getContext(), ReadActivity.class);
-                    intent.putExtra("bookpath", bookpath);
-                    intent.putExtra("bookname", bookname);
-                    startActivity(intent);
-                    getActivity().overridePendingTransition(anim.abc_grow_fade_in_from_bottom, anim.abc_shrink_fade_out_from_bottom);
+                if(bookLists!=null) {
+                    if(!bookLists.get(position).getBookpath().startsWith("http")) {
+                        setBookViewPosition(position);
+                        adapter.setItemToFirst(position);
+                        String bookpath = bookLists.get(position).getBookpath();
+                        String bookname = bookLists.get(position).getBookname();
+                        Intent intent = new Intent();
+                        intent.setClass(getContext(), ReadActivity.class);
+                        intent.putExtra("bookpath", bookpath);
+                        intent.putExtra("bookname", bookname);
+                        startActivity(intent);
+                        getActivity().overridePendingTransition(anim.abc_grow_fade_in_from_bottom, anim.abc_shrink_fade_out_from_bottom);
+                    } else {
+                        Toast.makeText(getContext(),"请下载后浏览",Toast.LENGTH_SHORT).show();
+                    }
                 }
 
             }
