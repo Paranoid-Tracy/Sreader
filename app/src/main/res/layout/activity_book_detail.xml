@@ -123,12 +123,14 @@
                         android:layout_marginRight="10dp"
                         android:layout_weight="1"
                         android:background="@drawable/shape_common_btn_solid_pressed"
-                        android:clickable="true"
+                        android:focusable="true"
                         android:drawableLeft="@drawable/book_detail_info_add_img"
                         android:drawablePadding="3dp"
-                        android:text="@string/book_detail_join_collection"
                         android:padding="10dp"
-                        android:textColor="@color/white" />
+                        android:text="@string/book_detail_join_collection"
+                        android:textColor="@color/white"
+                        android:duplicateParentState="true"
+                        />
 
                 </LinearLayout>
 
@@ -358,10 +360,10 @@
                 android:id="@+id/round_bar"
                 android:layout_width="match_parent"
                 android:layout_height="50sp"
-                app:textSize="12sp"
                 app:loadingColor="#40c4ff"
+                app:radius="20dp"
                 app:stopColor="#ff9800"
-                app:radius="20dp"/>
+                app:textSize="12sp" />
 
         </LinearLayout>
     </ScrollView>

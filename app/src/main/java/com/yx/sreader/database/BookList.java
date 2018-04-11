@@ -12,7 +12,7 @@ public class BookList extends DataSupport {
     private int id;
     private String bookname;
     private String bookpath;
-    private Image image;
+    private String  image;
 
     public String getBookname() {
         return this.bookname;
@@ -38,11 +38,11 @@ public class BookList extends DataSupport {
         this.id = id;
     }
 
-    public Image getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(Image image) {
+    public void setImage(String image) {
         this.image = image;
     }
 }

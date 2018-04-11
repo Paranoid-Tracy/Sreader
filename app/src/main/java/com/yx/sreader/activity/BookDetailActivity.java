@@ -1,12 +1,16 @@
 package com.yx.sreader.activity;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -14,12 +18,19 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.yx.sreader.R;
+import com.yx.sreader.database.BookList;
 import com.yx.sreader.util.CornersTransform;
 import com.yx.sreader.util.DownloadUtil;
+import com.yx.sreader.util.FileUtil;
+import com.yx.sreader.view.DrawableCenterButton;
 import com.yx.sreader.view.FlikerProgressBar;
+
+import org.litepal.crud.DataSupport;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import io.github.lizhangqu.coreprogress.ProgressHelper;
 import io.github.lizhangqu.coreprogress.ProgressUIListener;
@@ -47,6 +58,10 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
     private Intent data;
     private String path;
     private boolean LongIntro = true;
+    private DrawableCenterButton btnJoinCollection;
+    protected List<AsyncTask<Void, Void, Boolean>> myAsyncTasks = new ArrayList<AsyncTask<Void, Void, Boolean>>();
+    private String bookName;
+    private String imageurl;
     //Thread downLoadThread;
     @Override
     protected void onCreate(Bundle saveInstanceState) {
@@ -61,6 +76,9 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
             }
         });
         setSupportActionBar(toolbar);
+        btnJoinCollection = (DrawableCenterButton)this.findViewById(R.id.btnJoinCollection);
+        btnJoinCollection.setMovementMethod(LinkMovementMethod.getInstance());
+        btnJoinCollection.setClickable(true);
         bookname = (TextView)this.findViewById(R.id.tvBookListTitle);
         bookintro = (TextView)this.findViewById(R.id.tvlongIntro);
         author = (TextView)this.findViewById(R.id.tvBookListAuthor);
@@ -68,13 +86,19 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         flikerProgressBar = (FlikerProgressBar)this.findViewById(R.id.round_bar);
         flikerProgressBar.setStart(true);
         flikerProgressBar.setOnClickListener(this);
+        btnJoinCollection.setOnClickListener(this);
+        //btnJoinCollection.setOnTouchListener(this);
+
         data = getIntent();
-        bookname.setText(data.getStringExtra("bookname"));
+        path = data.getStringExtra("bookpath");
+        bookName = data.getStringExtra("bookname");
+        imageurl = data.getStringExtra("bookimage");
+        bookname.setText(bookName);
         bookintro.setOnClickListener(this);
         bookintro.setText(data.getStringExtra("bookintroduction"));
         author.setText(data.getStringExtra("author"));
-        Glide.with(this).load(data.getStringExtra("bookimage")).transform(new CornersTransform(this,50)).into(bookimage);
-        path = data.getStringExtra("bookpath");
+        Glide.with(this).load(imageurl).transform(new CornersTransform(this,50)).into(bookimage);
+
 
     }
 
@@ -149,9 +173,63 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         });
 
     }
+
+    public void putAsyncTask(AsyncTask<Void, Void, Boolean> asyncTask) {
+        myAsyncTasks.add(asyncTask.execute());
+    }
+
+    public void saveBooktoSqlite (final String bookName,final String key,final String imagepath,final BookList bookList ) {
+
+        putAsyncTask(new AsyncTask<Void, Void, Boolean>() {
+
+            @Override
+            protected void onPreExecute() {
+                //可以进行界面上的初始化操作
+            }
+
+            @Override
+            protected Boolean doInBackground(Void... params) {
+
+                try {
+                    String sql = "SELECT id FROM booklist WHERE bookname =? and bookpath =? and image =?";
+                    Cursor cursor = DataSupport.findBySQL(sql, bookName, key,imagepath);
+                    if (!cursor.moveToFirst()) { //This method will return false if the cursor is empty
+                        bookList.save();
+                    } else {
+                        return false;
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    //  return false;
+                }
+                return true;
+            }
+
+            @Override
+            protected void onPostExecute(Boolean result) {
+                if (result) {
+                } else {
+                    Toast.makeText(getApplicationContext(), bookName+"已在书架了", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+        });
+    }
     @Override
     public void onClick(View v){
         switch (v.getId()){
+            case R.id.btnJoinCollection:
+                BookList bookList = new BookList();
+                //File file = new File(path);
+                //String bookName = FileUtil.getFileNameNoEx(file.getName());
+                bookList.setBookname(data.getStringExtra("bookname"));
+                bookList.setImage(data.getStringExtra("bookimage"));
+                bookList.setBookpath(path);
+                saveBooktoSqlite(bookName, path,imageurl, bookList);//开启线程存储书到数据库
+                Log.v("传入路径",path);
+                break;
+
             case R.id.tvlongIntro:
                 if (LongIntro) {
                     bookintro.setMaxLines(20);
@@ -160,11 +238,13 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
                     bookintro.setMaxLines(4);
                     LongIntro = true;
                 }
+                break;
             case R.id.round_bar:
                 if(flikerProgressBar.isStart()){
                     flikerProgressBar.setStart(false);
                     download();
                 }
+                break;
                 /*else if(!flikerProgressBar.isFinish()){
                     flikerProgressBar.toggle();
                     flikerProgressBar.toggle();
@@ -178,4 +258,20 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
 
         }
     }
+
+    /*@Override
+    public boolean onTouch(View v, MotionEvent event) {
+        switch (v.getId()){
+            case R.id.btnJoinCollection:
+                BookList bookList = new BookList();
+                File file = new File(path);
+                String bookName = FileUtil.getFileNameNoEx(file.getName());
+                bookList.setBookname(data.getStringExtra("bookname"));
+                bookList.setImage(data.getStringExtra("bookimage"));
+                bookList.setBookpath(path);
+                saveBooktoSqlite(bookName, path,imageurl, bookList);//开启线程存储书到数据库
+                break;
+        }
+        return false;
+    }*/
 }

@@ -9,8 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.yx.sreader.DragGridListener;
 import com.yx.sreader.R;
 import com.yx.sreader.database.BookList;
@@ -32,7 +34,7 @@ public class ShelfAdapter extends BaseAdapter implements DragGridListener {
     private Context mContex;
     private List<BookList> bilist;
     private static LayoutInflater inflater = null;
-    private String booKpath,bookname;
+    private String booKpath,bookname,imagepath;
     private int mHidePosition = -1;
     private Typeface typeface;
     protected List<AsyncTask<Void, Void, Boolean>> myAsyncTasks = new ArrayList<AsyncTask<Void, Void, Boolean>>();
@@ -72,6 +74,7 @@ public class ShelfAdapter extends BaseAdapter implements DragGridListener {
             contentView = inflater.inflate(R.layout.item_shelf, null);
             viewHolder = new ViewHolder();
             viewHolder.view = (TextView) contentView.findViewById(R.id.imageView1);
+            viewHolder.view1 = (ImageView) contentView.findViewById(R.id.imageView2);
             viewHolder.view.setTypeface(typeface);
             viewHolder.deleteItem_IB = (ImageButton) contentView.findViewById(R.id.item_close_Im);
             contentView.setTag(viewHolder);
@@ -84,6 +87,7 @@ public class ShelfAdapter extends BaseAdapter implements DragGridListener {
             //   viewHolder.view.setBackgroundResource(R.drawable.cover_default_new);
             viewHolder.view.setClickable(false);
             viewHolder.view.setVisibility(View.INVISIBLE);
+            viewHolder.view1.setVisibility(View.INVISIBLE);
             viewHolder.deleteItem_IB.setVisibility(View.INVISIBLE);
         } else {
             if (bilist.size() > position) {
@@ -91,8 +95,15 @@ public class ShelfAdapter extends BaseAdapter implements DragGridListener {
                 //   viewHolder.view.setBackgroundResource(R.drawable.cover_default_new);
                 final String fileName = bilist.get(position).getBookname();
                 final String filePath = bilist.get(position).getBookpath();
+                final String imagePath = bilist.get(position).getImage();
                 viewHolder.view.setText(fileName);
-
+                if(bilist.get(position).getImage()==null){
+                    viewHolder.view1.setVisibility(View.INVISIBLE);
+                }else {
+                    viewHolder.view1.setVisibility(View.VISIBLE);
+                }
+                /*viewHolder.view1.setBackgroundResource(R.drawable.cover_default);*/
+                Glide.with(mContex).load(imagePath).into(viewHolder.view1);
                 if (DragGridView.getShowDeleteButton()) {
                     viewHolder.deleteItem_IB.setVisibility(View.VISIBLE);
                 } else {
@@ -100,6 +111,7 @@ public class ShelfAdapter extends BaseAdapter implements DragGridListener {
                 }
                 bookname = fileName;
                 booKpath = filePath;
+                imagepath = imagePath;
 
                 if (position == mHidePosition) {
                     contentView.setVisibility(View.INVISIBLE);
@@ -114,6 +126,7 @@ public class ShelfAdapter extends BaseAdapter implements DragGridListener {
                 viewHolder.deleteItem_IB.setClickable(false);
                 viewHolder.view.setVisibility(View.GONE);
                 viewHolder.deleteItem_IB.setVisibility(View.GONE);
+                viewHolder.view1.setVisibility(View.GONE);
 
             }
         }
@@ -123,6 +136,7 @@ public class ShelfAdapter extends BaseAdapter implements DragGridListener {
     class ViewHolder {
         ImageButton deleteItem_IB;
         TextView view;
+        ImageView view1;
     }
 
     @Override

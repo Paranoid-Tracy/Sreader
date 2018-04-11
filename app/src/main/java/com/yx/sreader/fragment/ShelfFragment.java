@@ -64,16 +64,19 @@ public class ShelfFragment extends Fragment {
         bookShelf.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                setBookViewPosition(itemPosition);
-                adapter.setItemToFirst(itemPosition);
-                String bookpath = bookLists.get(itemPosition).getBookpath();
-                String bookname = bookLists.get(itemPosition).getBookname();
-                Intent intent = new Intent();
-                intent.setClass(getContext(), ReadActivity.class);
-                intent.putExtra("bookpath", bookpath);
-                intent.putExtra("bookname", bookname);
-                startActivity(intent);
-                getActivity().overridePendingTransition(anim.abc_grow_fade_in_from_bottom, anim.abc_shrink_fade_out_from_bottom);
+                BookList booklist = DataSupport.findFirst(BookList.class);
+                if(booklist!=null) {
+                    setBookViewPosition(itemPosition);
+                    adapter.setItemToFirst(itemPosition);
+                    String bookpath = bookLists.get(itemPosition).getBookpath();
+                    String bookname = bookLists.get(itemPosition).getBookname();
+                    Intent intent = new Intent();
+                    intent.setClass(getContext(), ReadActivity.class);
+                    intent.putExtra("bookpath", bookpath);
+                    intent.putExtra("bookname", bookname);
+                    startActivity(intent);
+                    getActivity().overridePendingTransition(anim.abc_grow_fade_in_from_bottom, anim.abc_shrink_fade_out_from_bottom);
+                }
 
             }
         });
