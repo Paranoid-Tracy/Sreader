@@ -1,9 +1,11 @@
 package com.yx.sreader.activity;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -161,7 +163,7 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
 
                 BufferedSource source = responseBody.source();
 
-                File outFile = new File("sdcard/temp1.txt");
+                File outFile = new File("sdcard/"+bookName+".txt");
                 outFile.delete();
                 outFile.getParentFile().mkdirs();
                 outFile.createNewFile();
@@ -250,6 +252,11 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
                     bookDownload.setBookpath(path);
                     bookDownload.setAuthor(data.getStringExtra("author"));
                     saveBooktoSqlite1(bookName,path,imageurl,bookDownload);
+                    String rootpath = Environment.getExternalStorageDirectory().toString();
+                    Log.v("当前目录路径",rootpath+bookName+".txt");
+                    ContentValues values = new ContentValues();
+                    values.put("bookpath", rootpath+"/"+bookName+".txt");
+                    DataSupport.updateAll(BookList.class,values,"bookname = ?",bookName);
 
                 }
                 break;
@@ -280,7 +287,7 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
             protected Boolean doInBackground(Void... params) {
 
                 try {
-                    String sql = "SELECT id FROM bookdownload WHERE bookname =? and bookpath =? and image =?";
+                    String sql = "SELECT id FROM bookdownload WHERE bookname =? and bookpath =? and bookimage =?";
                     Cursor cursor = DataSupport.findBySQL(sql, bookName, key,imagepath);
                     if (!cursor.moveToFirst()) { //This method will return false if the cursor is empty
                         bookDownload.save();

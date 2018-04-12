@@ -8,6 +8,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.yx.sreader.R;
 import com.yx.sreader.database.BookDownload;
 import com.yx.sreader.database.BookList;
@@ -109,6 +110,7 @@ public class MyExpandableListViewAdapter extends BaseExpandableListAdapter {
         TextView tv_child_info = (TextView) view.findViewById(R.id.tv_child_info);
         TextView tv_child_name = (TextView) view.findViewById(R.id.tv_child_name);
         tv_child_name.setText(bookDownloads.get(childPosition).getBookname());
+        Glide.with(context).load(bookDownloads.get(childPosition).getBookimage()).into(iv_child_icon);
         return view;
     }
 
