@@ -24,6 +24,7 @@ public class WelcomeActivity extends AppCompatActivity {
     private ImageView imageView;
     private static int DURATION = 1500;
     private static List<String> listbookinfo;
+    private static boolean IsInNetwork = false;
     private static Handler handler = new Handler();
     private String info;
     @Override
@@ -63,6 +64,10 @@ public class WelcomeActivity extends AppCompatActivity {
         return listbookinfo;
     }
 
+    public static boolean isInNetwork(){
+        return IsInNetwork;
+    }
+
 
     public class MyThread implements Runnable {
         @Override
@@ -73,7 +78,10 @@ public class WelcomeActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     //System.out.printf("当前获取数据"+info);
-                    listbookinfo = stringToList(info);
+                    if(!(info.equals("no"))) {
+                        listbookinfo = stringToList(info);
+                        IsInNetwork = true;
+                    }
                 }
             });
         }

@@ -63,7 +63,7 @@ public class WebService {
             }
 
         }
-        return null;
+        return "no";
     }
 
     // 将输入流转化为 String 型

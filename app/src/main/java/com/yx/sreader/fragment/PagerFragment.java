@@ -26,6 +26,7 @@ import com.yx.sreader.service.WebService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -64,14 +65,17 @@ public class PagerFragment extends Fragment {
         rv = (RecyclerView) view.findViewById(R.id.rv);
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.refresh);
         swipeRefreshLayout.setRefreshing(true);
-        addData();
+        if(WelcomeActivity.isInNetwork()) {
+            addData();
+            setAdapter();
+        }
         //createThread();
-        //seeRefresh();
+        seeRefresh();
     }
 
-    private void addData(){
-        if(!(listbookinfo.size()==0)){
-            for(int i =0; i <listbookinfo.size()/6; i++ ) {
+    private void addData() {
+        if (!(listbookinfo.size() == 0)) {
+            for (int i = 0; i < listbookinfo.size() / 6; i++) {
                 bookInfo = new BookInfo();
                 bookInfo.setAuthor(((String) listbookinfo.get(0 + i * 6)).substring(9));
                 bookInfo.setBookname(((String) listbookinfo.get(1 + i * 6)).substring(10));
@@ -80,17 +84,21 @@ public class PagerFragment extends Fragment {
                 bookInfo.setBookintroduction(((String) listbookinfo.get(5 + i * 6)).substring(14));
                 newList.add(0, bookInfo);
             }
+
         }
+    }
+
+    private void setAdapter(){
         adapter.add(newList);
         adapter.setOnItemClickListener(new OnRecItemClickListener() {
             @Override
             public void onClick(View view, int position) {
                 Intent i = new Intent(getContext(), BookDetailActivity.class);
-                i.putExtra("author",newList.get(position).getAuthor());
-                i.putExtra("bookname",newList.get(position).getBookname());
-                i.putExtra("bookpath",newList.get(position).getBookpath());
-                i.putExtra("bookimage",newList.get(position).getBookimage());
-                i.putExtra("bookintroduction",newList.get(position).getBookintroduction());
+                i.putExtra("author", newList.get(position).getAuthor());
+                i.putExtra("bookname", newList.get(position).getBookname());
+                i.putExtra("bookpath", newList.get(position).getBookpath());
+                i.putExtra("bookimage", newList.get(position).getBookimage());
+                i.putExtra("bookintroduction", newList.get(position).getBookintroduction());
                 startActivity(i);
             }
         });
@@ -100,4 +108,26 @@ public class PagerFragment extends Fragment {
         swipeRefreshLayout.setRefreshing(false);
     }
 
+    private void exchangeData(){
+        Collections.reverse(newList);
+    }
+
+    public void seeRefresh() {
+        // 设置下拉进度的背景颜色，默认就是白色的
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
+        // 设置下拉进度的主题颜色
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimary, R.color.colorPrimaryDark);
+
+        //监听刷新
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if(WelcomeActivity.isInNetwork()) {
+                    exchangeData();
+                    setAdapter();
+                }
+
+            }
+        });
+    }
 }

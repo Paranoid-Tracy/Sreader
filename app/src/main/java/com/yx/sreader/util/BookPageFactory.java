@@ -91,10 +91,6 @@ public class BookPageFactory {
 
 
 
-
-
-
-
     public BookPageFactory(int w, int h,Context context) {
         mWidth = w;
         mHeight = h;
@@ -510,6 +506,9 @@ public class BookPageFactory {
         return m_mbBufBegin;
     }
     public String getFirstTwoLineText() {
+        if(m_lines.size()==1){
+            return m_lines.get(0)+"\n\n";
+        }
         return m_lines.size() > 0 ? m_lines.get(0)+m_lines.get(1) : "";
     }
 
