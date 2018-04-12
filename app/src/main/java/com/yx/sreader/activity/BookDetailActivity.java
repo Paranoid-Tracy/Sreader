@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.yx.sreader.R;
+import com.yx.sreader.database.BookDownload;
 import com.yx.sreader.database.BookList;
 import com.yx.sreader.util.CornersTransform;
 import com.yx.sreader.util.DownloadUtil;
@@ -243,6 +244,13 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
                 if(flikerProgressBar.isStart()){
                     flikerProgressBar.setStart(false);
                     download();
+                    BookDownload bookDownload = new BookDownload();
+                    bookDownload.setBookname(bookName);
+                    bookDownload.setBookimage(imageurl);
+                    bookDownload.setBookpath(path);
+                    bookDownload.setAuthor(data.getStringExtra("author"));
+                    saveBooktoSqlite1(bookName,path,imageurl,bookDownload);
+
                 }
                 break;
                 /*else if(!flikerProgressBar.isFinish()){
@@ -257,6 +265,45 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
                 }*/
 
         }
+    }
+
+    public void saveBooktoSqlite1 (final String bookName,final String key,final String imagepath,final BookDownload bookDownload ) {
+
+        putAsyncTask(new AsyncTask<Void, Void, Boolean>() {
+
+            @Override
+            protected void onPreExecute() {
+                //可以进行界面上的初始化操作
+            }
+
+            @Override
+            protected Boolean doInBackground(Void... params) {
+
+                try {
+                    String sql = "SELECT id FROM bookdownload WHERE bookname =? and bookpath =? and image =?";
+                    Cursor cursor = DataSupport.findBySQL(sql, bookName, key,imagepath);
+                    if (!cursor.moveToFirst()) { //This method will return false if the cursor is empty
+                        bookDownload.save();
+                        Log.v("是否写入",bookDownload.getBookname());
+                    } else {
+                        return false;
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return true;
+            }
+
+            @Override
+            protected void onPostExecute(Boolean result) {
+                if (result) {
+                } else {
+                    //Toast.makeText(getApplicationContext(), bookName+"已在书架了", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+        });
     }
 
     /*@Override

@@ -66,7 +66,7 @@ public class ShelfFragment extends Fragment {
         bookShelf.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(bookLists!=null) {
+                if(!(bookLists.size()==0)) {
                     if(!bookLists.get(position).getBookpath().startsWith("http")) {
                         setBookViewPosition(position);
                         adapter.setItemToFirst(position);

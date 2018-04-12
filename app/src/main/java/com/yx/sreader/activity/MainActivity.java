@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         initBotNavigationBar();
-        init();
+        //init();
         //getDatasync();
 
     }

@@ -18,6 +18,7 @@ import com.yx.sreader.OnRecItemClickListener;
 import com.yx.sreader.R;
 import com.yx.sreader.activity.BookDetailActivity;
 import com.yx.sreader.activity.MainActivity;
+import com.yx.sreader.activity.WelcomeActivity;
 import com.yx.sreader.adapter.PagerAdapter;
 import com.yx.sreader.adapter.RecommendAdapter;
 import com.yx.sreader.bean.BookInfo;
@@ -40,7 +41,7 @@ public class PagerFragment extends Fragment {
     private BookInfo bookInfo;
     private SwipeRefreshLayout swipeRefreshLayout;
     private String info;
-    private static List listbookinfo = MainActivity.getListbookinfo();
+    private static List listbookinfo = WelcomeActivity.getListbookinfo();
     private static Handler handler = new Handler();
 
     public static PagerFragment newInstance(int pos){
@@ -69,14 +70,16 @@ public class PagerFragment extends Fragment {
     }
 
     private void addData(){
-        for(int i =0; i <listbookinfo.size()/6; i++ ) {
-            bookInfo = new BookInfo();
-            bookInfo.setAuthor(((String)listbookinfo.get(0+i*6)).substring(9));
-            bookInfo.setBookname(((String)listbookinfo.get(1+i*6)).substring(10));
-            bookInfo.setBookpath(((String)listbookinfo.get(2+i*6)).substring(6));
-            bookInfo.setBookimage("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=4154742693,3551412937&fm=27&gp=0.jpg");
-            bookInfo.setBookintroduction(((String)listbookinfo.get(5+i*6)).substring(14));
-            newList.add(0, bookInfo);
+        if(!(listbookinfo.size()==0)){
+            for(int i =0; i <listbookinfo.size()/6; i++ ) {
+                bookInfo = new BookInfo();
+                bookInfo.setAuthor(((String) listbookinfo.get(0 + i * 6)).substring(9));
+                bookInfo.setBookname(((String) listbookinfo.get(1 + i * 6)).substring(10));
+                bookInfo.setBookpath(((String) listbookinfo.get(2 + i * 6)).substring(6));
+                bookInfo.setBookimage("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=4154742693,3551412937&fm=27&gp=0.jpg");
+                bookInfo.setBookintroduction(((String) listbookinfo.get(5 + i * 6)).substring(14));
+                newList.add(0, bookInfo);
+            }
         }
         adapter.add(newList);
         adapter.setOnItemClickListener(new OnRecItemClickListener() {
