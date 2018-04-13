@@ -29,11 +29,6 @@ public class MyExpandableListViewAdapter extends BaseExpandableListAdapter {
     private LayoutInflater inflater;
     private String[] group = new String[]{"下载列表"};
     private List<BookDownload> bookDownloads;
-    private String[][] childs= new String[][]{{ "习大大","李克强","普京", "金正恩", "安倍晋三"},
-            {"刘铁男","万庆良","周永康", "徐才厚", "谷俊山", "令计划","郭伯雄","苏荣","陈水扁","蒋洁敏","李东生","白恩培" },
-            { "马云", "麻花藤", "李彦宏", "周鸿祎","雷布斯","库克" },
-            {"李冰冰","范冰冰","李小璐","杨颖","周冬雨","Lady GaGa","千颂伊","尹恩惠"}};
-
 
 
     /**

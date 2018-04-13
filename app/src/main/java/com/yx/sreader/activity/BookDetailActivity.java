@@ -107,7 +107,7 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
 
 
     private void download() {
-        String url = "http://172.23.0.168:8080//BookInfo/%E9%A3%9E%E5%A4%A9.txt";
+        String url = "http://172.23.0.168:8080//BookInfo/"+bookName+".txt";
 
         OkHttpClient okHttpClient = new OkHttpClient();
         Request.Builder builder = new Request.Builder();
@@ -313,19 +313,5 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         });
     }
 
-    /*@Override
-    public boolean onTouch(View v, MotionEvent event) {
-        switch (v.getId()){
-            case R.id.btnJoinCollection:
-                BookList bookList = new BookList();
-                File file = new File(path);
-                String bookName = FileUtil.getFileNameNoEx(file.getName());
-                bookList.setBookname(data.getStringExtra("bookname"));
-                bookList.setImage(data.getStringExtra("bookimage"));
-                bookList.setBookpath(path);
-                saveBooktoSqlite(bookName, path,imageurl, bookList);//开启线程存储书到数据库
-                break;
-        }
-        return false;
-    }*/
+
 }
