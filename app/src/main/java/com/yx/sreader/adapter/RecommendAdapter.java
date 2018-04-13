@@ -2,6 +2,7 @@ package com.yx.sreader.adapter;
 
 import android.content.Context;
 import android.os.Handler;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,8 +31,7 @@ public class RecommendAdapter extends RecyclerView.Adapter {
     private Context mContext;
 
 
-    public RecommendAdapter(Context context,List<BookInfo> lists){
-
+    public RecommendAdapter(Context context, List<BookInfo> lists){
         this.mContext = context;
         this.lists = lists;
     }

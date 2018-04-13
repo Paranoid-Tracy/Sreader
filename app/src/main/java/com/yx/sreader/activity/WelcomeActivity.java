@@ -11,8 +11,13 @@ import android.support.v7.appcompat.R.anim;
 
 import com.bumptech.glide.Glide;
 import com.yx.sreader.R;
+import com.yx.sreader.fragment.BiographyFragment;
+import com.yx.sreader.fragment.InspirationalFragment;
+import com.yx.sreader.fragment.PhilosophyFragment;
+import com.yx.sreader.fragment.ScienceFragment;
 import com.yx.sreader.service.WebService;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -23,10 +28,11 @@ import java.util.List;
 public class WelcomeActivity extends AppCompatActivity {
     private ImageView imageView;
     private static int DURATION = 1500;
-    private static List<String> listbookinfo;
+    private static List<String>[] listbookinfo = new List[7];
     private static boolean IsInNetwork = false;
     private static Handler handler = new Handler();
-    private String info;
+    private String[] info = new String[7];
+    private String [] db = {"Book","History","Youth", "Inspirational", "Biography","Science", "Philosophy"};
     @Override
     protected void onCreate(Bundle saveInstanceState){
         super.onCreate(saveInstanceState);
@@ -60,7 +66,7 @@ public class WelcomeActivity extends AppCompatActivity {
     }
 
 
-    public static List<String> getListbookinfo() {
+    public static List<String>[] getListbookinfo() {
         return listbookinfo;
     }
 
@@ -72,15 +78,19 @@ public class WelcomeActivity extends AppCompatActivity {
     public class MyThread implements Runnable {
         @Override
         public void run() {
-            info = WebService.executeHttpGet("xiaoming");
+            for(int i = 0; i < 7 ;i++){
+                info[i] = WebService.executeHttpGet(db[i]);
+            }
             // info = WebServicePost.executeHttpPost(username.getText().toString(), password.getText().toString());
             handler.post(new Runnable() {
                 @Override
                 public void run() {
                     //System.out.printf("当前获取数据"+info);
-                    if(!(info.equals("no"))) {
-                        listbookinfo = stringToList(info);
-                        IsInNetwork = true;
+                    if(!(info[0].equals("no"))) {
+                        for(int i = 0; i < 7 ;i++) {
+                            listbookinfo[i] = stringToList(info[i]);
+                            IsInNetwork = true;
+                        }
                     }
                 }
             });

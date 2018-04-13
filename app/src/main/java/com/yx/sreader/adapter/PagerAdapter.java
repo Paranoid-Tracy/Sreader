@@ -4,8 +4,15 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.util.Log;
 
+import com.yx.sreader.fragment.BiographyFragment;
+import com.yx.sreader.fragment.HistoryFragment;
+import com.yx.sreader.fragment.InspirationalFragment;
 import com.yx.sreader.fragment.PagerFragment;
+import com.yx.sreader.fragment.PhilosophyFragment;
+import com.yx.sreader.fragment.ScienceFragment;
+import com.yx.sreader.fragment.YouthFragment;
 import com.yx.sreader.util.CommonUtil;
 
 /**
@@ -24,8 +31,30 @@ public class PagerAdapter extends FragmentPagerAdapter{
 
     @Override
     public Fragment getItem(int position) {
+        Log.v("调用位置",""+position);
+        switch (position){
+            case 0:
+                return PagerFragment.newInstance();
+            case 1:
+                return HistoryFragment.newInstance();
 
-        return PagerFragment.newInstance(position);
+            case 2:
+                return YouthFragment.newInstance();
+
+            case 3:
+                return InspirationalFragment.newInstance();
+
+            case 4:
+                return BiographyFragment.newInstance();
+
+            case 5:
+                return ScienceFragment.newInstance();
+            
+            default:
+                return PhilosophyFragment.newInstance();
+
+
+        }
     }
 
     @Override

@@ -35,7 +35,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * Created by iss on 2018/4/7.
  */
 
-public class PagerFragment extends Fragment {
+public class PhilosophyFragment extends Fragment {
     private int position;
     private View view;
     private List<BookInfo> newList;
@@ -43,15 +43,15 @@ public class PagerFragment extends Fragment {
     private RecyclerView rv;
     private BookInfo bookInfo;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private String dbname = "Book";
-    private static List<String> listbookinfo = WelcomeActivity.getListbookinfo()[0];
+    private String dbname = "Philosophy";
+    private static List<String> listbookinfo = WelcomeActivity.getListbookinfo()[6];
     private static boolean IsInNetwork = WelcomeActivity.isInNetwork();
     private static Handler handler = new Handler();
     private String info;
     private ReentrantLock lock = new ReentrantLock();
 
-    public static PagerFragment newInstance(){
-        PagerFragment pagerFragment = new PagerFragment();
+    public static PhilosophyFragment newInstance(){
+        PhilosophyFragment pagerFragment = new PhilosophyFragment();
         return pagerFragment;
     }
     @Override
