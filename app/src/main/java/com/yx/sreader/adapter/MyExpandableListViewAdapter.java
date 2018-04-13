@@ -6,13 +6,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.daimajia.swipe.SwipeLayout;
 import com.yx.sreader.R;
 import com.yx.sreader.database.BookDownload;
-import com.yx.sreader.database.BookList;
-import com.yx.sreader.view.FlikerProgressBar;
+import com.yx.sreader.Callback;
 
 import org.litepal.crud.DataSupport;
 
@@ -29,6 +30,8 @@ public class MyExpandableListViewAdapter extends BaseExpandableListAdapter {
     private LayoutInflater inflater;
     private String[] group = new String[]{"下载列表"};
     private List<BookDownload> bookDownloads;
+    private SwipeLayout swipeLayout;
+    private Callback callback;
 
 
     /**
@@ -98,19 +101,67 @@ public class MyExpandableListViewAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+    public View getChildView(int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         View view = inflater.inflate(R.layout.item_elv_child,null);
 
         ImageView iv_child_icon = (ImageView) view.findViewById(R.id.iv_child_icon);
         TextView tv_child_info = (TextView) view.findViewById(R.id.tv_child_info);
         TextView tv_child_name = (TextView) view.findViewById(R.id.tv_child_name);
+        LinearLayout llEdit = (LinearLayout) view.findViewById(R.id.llEdit);
+        swipeLayout = (SwipeLayout) view.findViewById(R.id.swipe);
+        swipeLayout.setShowMode(SwipeLayout.ShowMode.PullOut);
+        swipeLayout.addDrag(SwipeLayout.DragEdge.Right,swipeLayout.findViewWithTag("Bottom2"));
         tv_child_name.setText(bookDownloads.get(childPosition).getBookname());
         Glide.with(context).load(bookDownloads.get(childPosition).getBookimage()).into(iv_child_icon);
+
+        llEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callback.click(bookDownloads.get(childPosition).getBookname());
+
+            }
+        });
+        swipeLayout.addSwipeListener(new SwipeLayout.SwipeListener() {
+            @Override
+            public void onStartOpen(SwipeLayout layout) {
+                swipeLayout.close(true);
+            }
+
+            @Override
+            public void onOpen(SwipeLayout layout) {
+                swipeLayout = layout;
+            }
+
+            @Override
+            public void onStartClose(SwipeLayout layout) {
+
+            }
+
+            @Override
+            public void onClose(SwipeLayout layout) {
+
+            }
+
+            @Override
+            public void onUpdate(SwipeLayout layout, int leftOffset, int topOffset) {
+
+            }
+
+            @Override
+            public void onHandRelease(SwipeLayout layout, float xvel, float yvel) {
+
+            }
+        });
+
         return view;
     }
 
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;
+    }
+
+    public void setCallback(Callback callback){
+        this.callback = callback;
     }
 }
