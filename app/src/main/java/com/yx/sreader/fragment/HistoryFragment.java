@@ -83,11 +83,11 @@ public class HistoryFragment extends Fragment {
         if (!(listbookinfo.size() == 0)) {
             for (int i = 0; i < listbookinfo.size() / 6; i++) {
                 bookInfo = new BookInfo();
-                bookInfo.setAuthor(((String) listbookinfo.get(0 + i * 6)).substring(9));
-                bookInfo.setBookname(((String) listbookinfo.get(1 + i * 6)).substring(10));
-                bookInfo.setBookpath(((String) listbookinfo.get(2 + i * 6)).substring(6));
-                bookInfo.setBookimage("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=4154742693,3551412937&fm=27&gp=0.jpg");
-                bookInfo.setBookintroduction(((String) listbookinfo.get(5 + i * 6)).substring(14));
+                bookInfo.setAuthor((listbookinfo.get(i * 6)).substring(9));
+                bookInfo.setBookname((listbookinfo.get(1 + i * 6)).substring(10));
+                bookInfo.setBookpath((listbookinfo.get(2 + i * 6)).substring(6));
+                bookInfo.setBookimage((listbookinfo.get(4 + i * 6)).substring(10));
+                bookInfo.setBookintroduction((listbookinfo.get(5 + i * 6)).substring(14));
                 newList.add(0, bookInfo);
             }
 

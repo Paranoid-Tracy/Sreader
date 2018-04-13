@@ -11,10 +11,6 @@ import android.support.v7.appcompat.R.anim;
 
 import com.bumptech.glide.Glide;
 import com.yx.sreader.R;
-import com.yx.sreader.fragment.BiographyFragment;
-import com.yx.sreader.fragment.InspirationalFragment;
-import com.yx.sreader.fragment.PhilosophyFragment;
-import com.yx.sreader.fragment.ScienceFragment;
 import com.yx.sreader.service.WebService;
 
 import java.util.ArrayList;
@@ -61,6 +57,9 @@ public class WelcomeActivity extends AppCompatActivity {
         finish();
     }
 
+    /**
+     * 开启线程初始化服务器数据供后续推荐列表使用
+     */
     private void init(){
         new Thread(new MyThread()).start();
     }
@@ -97,6 +96,11 @@ public class WelcomeActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * 将服务器接收转化的String型再转成List方便取出子项
+     * @param strs
+     * @return
+     */
     private List<String> stringToList(String strs){
         String str[] = strs.split(",");
         return Arrays.asList(str);

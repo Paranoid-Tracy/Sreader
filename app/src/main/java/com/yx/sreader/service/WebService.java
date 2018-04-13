@@ -24,7 +24,7 @@ public class WebService {
     //private static String IP = "192.168.11.142:8080";
 
     // 通过Get方式获取HTTP服务器数据
-    public static String executeHttpGet(String username) {
+    public static String executeHttpGet(String dbname) {
 
         HttpURLConnection conn = null;
         InputStream is = null;
@@ -33,7 +33,7 @@ public class WebService {
             // 用户名 密码
             // URL 地址
             String path = "http://" + IP + "/BookInfo/BookLet";
-            path = path + "?username=" + username ;
+            path = path + "?dbname=" + dbname ;
 
             conn = (HttpURLConnection) new URL(path).openConnection();
             conn.setConnectTimeout(3000); // 设置超时时间
