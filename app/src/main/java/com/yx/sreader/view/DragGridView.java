@@ -138,14 +138,14 @@ public class DragGridView extends GridView implements View.OnClickListener{
         this(context, null);
         background = BitmapFactory.decodeResource(getResources(),
                 R.drawable.bookshelf_layer_center);
-        bookshelf_dock = BitmapFactory.decodeResource(getResources(),R.drawable.bookshelf_dock);
+        bookshelf_dock = BitmapFactory.decodeResource(getResources(),R.drawable.bookshelf_dock1);
     }
 
     public DragGridView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
         background = BitmapFactory.decodeResource(getResources(),
                 R.drawable.bookshelf_layer_center);
-        bookshelf_dock = BitmapFactory.decodeResource(getResources(),R.drawable.bookshelf_dock);
+        bookshelf_dock = BitmapFactory.decodeResource(getResources(),R.drawable.bookshelf_dock1);
     }
 
     public DragGridView(Context context, AttributeSet attrs, int defStyleAttr) {

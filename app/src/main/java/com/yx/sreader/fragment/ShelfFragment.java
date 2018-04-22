@@ -62,7 +62,7 @@ public class ShelfFragment extends Fragment {
         adapter = new ShelfAdapter(getContext(), bookLists);
         bookShelf.setAdapter(adapter);
         setHasOptionsMenu(true);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("我的书架");
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Sreader");
         bookShelf.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
