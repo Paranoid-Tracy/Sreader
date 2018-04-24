@@ -91,9 +91,9 @@ public class MyExpandableListViewAdapter extends BaseExpandableListAdapter {
 
         /*isExpanded 子列表是否展开*/
         if(isExpanded){
-            iv_group_icon.setImageResource(R.drawable.return_button);
+            iv_group_icon.setImageResource(R.drawable.expand1);
         }else {
-            iv_group_icon.setImageResource(R.drawable.return_button);
+            iv_group_icon.setImageResource(R.drawable.expand);
         }
 
         return view;

@@ -22,8 +22,8 @@ public class WebService {
 
     //private static String IP = "192.168.2.203:8080";
 
-    //private static String IP = "172.23.0.168:8080";
-    private static String IP = "192.168.43.140:8080";
+    private static String IP = "172.23.0.168:8080";
+    //private static String IP = "192.168.43.140:8080";
 
     // 通过Get方式获取HTTP服务器数据
     public static String executeHttpGet(String dbname) {

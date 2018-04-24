@@ -15,14 +15,14 @@
 
     <TextView
         android:text="下载"
+        android:textSize="14dp"
+        android:layout_marginTop="5dp"
         android:textStyle="bold"
         android:id="@+id/tv_group_name"
-        android:layout_marginTop="15dp"
         android:layout_toRightOf="@id/iv_group_icon"
         android:layout_width="wrap_content"
         android:layout_height="match_parent" />
     <TextView
-        android:text="10/10"
         android:gravity="center"
         android:id="@+id/tv_group_number"
         android:layout_alignParentRight="true"
