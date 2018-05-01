@@ -33,6 +33,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
+import java.util.regex.Matcher;
 
 /**
  * Created by iss on 2018/3/29.
@@ -455,7 +456,7 @@ public class BookPageFactory {
      */
     public void getBookInfo() {
         String strParagraph = "";
-        while (startPos < m_mbBufLen - 1){
+        while (startPos < m_mbBufLen - 1) {
             byte[] paraBuf = readParagraphForward(startPos);
             startPos += paraBuf.length;// 每次读取后，记录结束点位置，该位置是段落结束位置
             try {
@@ -473,25 +474,47 @@ public class BookPageFactory {
                 strReturn = "\n";
                 strParagraph = strParagraph.replaceAll("\n", "");
             }
-            if(strParagraph.contains("第") && strParagraph.contains("章")) {
-                int m_mstartpos = startPos - paraBuf.length;//获得章节段落开始位置
-                BookCatalogue bookCatalogue1 = new BookCatalogue();//每次保存后都要新建一个
-                strParagraph = strParagraph.trim();//去除字符串前后空格
-                bookCatalogue.add(strParagraph);   //保存到数组
-                bookCatalogueStartPos.add(m_mstartpos);
-                bookCatalogue1.setBookCatalogue(strParagraph);  //保存到数据库
-                bookCatalogue1.setBookCatalogueStartPos(m_mstartpos);
-                bookCatalogue1.setBookpath(ReadActivity.getBookPath());
-                String sql = "SELECT id FROM bookcatalogue WHERE bookcatalogue =? and bookCatalogueStartPos =?";
-                Cursor cursor = DataSupport.findBySQL(sql,strParagraph,m_mstartpos +"");
-                if(!cursor.moveToFirst()) {
-                    bookCatalogue1.save();
+                if (strParagraph.contains("第") && strParagraph.contains("章")) {
+                    int m_mstartpos = startPos - paraBuf.length;//获得章节段落开始位置
+                    BookCatalogue bookCatalogue1 = new BookCatalogue();//每次保存后都要新建一个
+                    strParagraph = strParagraph.trim();//去除字符串前后空格
+                    bookCatalogue.add(strParagraph);   //保存到数组
+                    bookCatalogueStartPos.add(m_mstartpos);
+                    bookCatalogue1.setBookCatalogue(strParagraph);  //保存到数据库
+                    bookCatalogue1.setBookCatalogueStartPos(m_mstartpos);
+                    bookCatalogue1.setBookpath(ReadActivity.getBookPath());
+                    String sql = "SELECT id FROM bookcatalogue WHERE bookcatalogue =? and bookCatalogueStartPos =?";
+                    Cursor cursor = DataSupport.findBySQL(sql, strParagraph, m_mstartpos + "");
+                    if (!cursor.moveToFirst()) {
+                        bookCatalogue1.save();
+                    }
+                //Log.v("当前",""+bookCatalogueStartPos.size());
+            }
+            if (strParagraph.contains("Chapter")) {
+                    int m_mstartpos = startPos - paraBuf.length;//获得章节段落开始位置
+                    BookCatalogue bookCatalogue1 = new BookCatalogue();//每次保存后都要新建一个
+                    strParagraph = strParagraph.trim();//去除字符串前后空格
+                    bookCatalogue.add(strParagraph);   //保存到数组
+                    bookCatalogueStartPos.add(m_mstartpos);
+                    bookCatalogue1.setBookCatalogue(strParagraph);  //保存到数据库
+                    bookCatalogue1.setBookCatalogueStartPos(m_mstartpos);
+                    bookCatalogue1.setBookpath(ReadActivity.getBookPath());
+                    String sql = "SELECT id FROM bookcatalogue WHERE bookcatalogue =? and bookCatalogueStartPos =?";
+                    Cursor cursor = DataSupport.findBySQL(sql, strParagraph, m_mstartpos + "");
+                    if (!cursor.moveToFirst()) {
+                        bookCatalogue1.save();
+                    }
                 }
-            }
-            //Log.v("当前",""+bookCatalogueStartPos.size());
-            }
+
+        }
 
     }
+    public static boolean isEnglish(String charaString){
+
+        return charaString.matches("^[a-zA-Z]*");
+
+    }
+
 
     public void setM_textColor(int m_textColor) {
         this.m_textColor = m_textColor;
